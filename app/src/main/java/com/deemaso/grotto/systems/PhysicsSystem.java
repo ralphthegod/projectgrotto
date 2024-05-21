@@ -93,7 +93,7 @@ public class PhysicsSystem extends System implements EventEmitter {
             RenderComponent render = entity.getComponent(GrottoRenderComponent.class);
             if(render != null) {
                 Log.d("PhysicsSystem", "Registering entity with render component");
-                box.setAsBox(render.getWidth()/2, render.getHeight()/2);
+                box.setAsBox(physics.getShapeWidth(), physics.getShapeHeight());
             } else {
                 Log.d("PhysicsSystem", "Registering entity without render component");
                 box.setAsBox(1, 1);
