@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Camera;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -31,12 +33,15 @@ import com.deemaso.grotto.components.CameraComponent;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.MusicComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
+import com.deemaso.grotto.events.CurrentViewEvent;
 import com.deemaso.grotto.listeners.AccelerometerListener;
 import com.deemaso.grotto.systems.GrottoCollisionSystem;
 import com.deemaso.grotto.systems.GrottoInputSystem;
 import com.deemaso.grotto.systems.GrottoRenderSystem;
 import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
+import com.deemaso.grotto.ui.UIManager;
+import com.deemaso.grotto.ui.elements.GameSpaceTextUIElement;
 import com.example.mfaella.physicsapp.CollisionSounds;
 import com.example.mfaella.physicsapp.R;
 import com.google.fpl.liquidfun.BodyType;
@@ -77,16 +82,24 @@ public class MainActivity extends Activity {
         Box physicalSize = new Box(XMIN, YMIN, XMAX, YMAX),
             screenSize   = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
 
-        GameWorld gw = new GrottoGameWorld(new EntityManager(), this);
+        GrottoGameWorld gw = new GrottoGameWorld(new EntityManager(), this);
 
         renderView = new AndroidFastRenderView(this, gw, metrics.widthPixels, metrics.heightPixels);
         setContentView(renderView);
 
-        RenderSystem renderSystem = new GrottoRenderSystem(gw, physicalSize, screenSize, renderView.getFrameBuffer());
+
+        GrottoRenderSystem renderSystem = new GrottoRenderSystem(gw, physicalSize, screenSize, renderView.getFrameBuffer());
         SoundSystem soundSystem = new SoundSystem(gw);
         PhysicsSystem physicsSystem = new PhysicsSystem(gw, 8,3,3);
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         CollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
+
+        UIManager uiManager = new UIManager(renderView.getFrameBuffer());
+
+        // Register the UI manager as a listener for the CurrentViewEvent
+        // This event is emitted by the render system when the camera moves
+        // so that the UI manager can update the position of the UI elements
+        renderSystem.registerListener(CurrentViewEvent.class, uiManager);
 
         // Order matters (input, physics, render...)
         gw.addSystem(inputSystem);
@@ -95,6 +108,9 @@ public class MainActivity extends Activity {
         gw.addSystem(soundSystem);
         //game logic systems
         gw.addSystem(renderSystem);
+
+        // Set the UI manager
+        gw.setUIManager(uiManager);
 
         // Entities
         Entity backgroundMusicEntity = new Entity();
@@ -114,19 +130,35 @@ public class MainActivity extends Activity {
         testingEntity.getComponent(PhysicsComponent.class).setDensity(0.5f);
         testingEntity.getComponent(PhysicsComponent.class).setFriction(0.9f);
         testingEntity.getComponent(PhysicsComponent.class).setBodyType(BodyType.dynamicBody);
+        testingEntity.getComponent(PhysicsComponent.class).setShapeHeight(2.5f/2);
+        testingEntity.getComponent(PhysicsComponent.class).setShapeWidth(2.5f/2);
         testingEntity.addComponent(new CameraComponent(1));
+        gw.getUIManager().addUIElement(new GameSpaceTextUIElement(
+                -1,
+                -1,
+                0,
+                0,
+                testingEntity,
+                "Lvl 1",
+                32,
+                gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
+                Color.WHITE,
+                new Paint()
+        ));
         gw.addEntity(testingEntity);
 
         Entity testingEntity2 = new Entity();
         GrottoRenderComponent grottoRenderComponent2 = new GrottoRenderComponent();
-        grottoRenderComponent2.setResourceIds(Arrays.asList(R.drawable.icona));
-        grottoRenderComponent2.setHeight(2.5f);
-        grottoRenderComponent2.setWidth(2.5f);
+        grottoRenderComponent2.setResourceIds(Arrays.asList(R.drawable.column));
+        grottoRenderComponent2.setHeight(4f);
+        grottoRenderComponent2.setWidth(2f);
         testingEntity2.addComponent(grottoRenderComponent2);
         testingEntity2.addComponent(new PhysicsComponent());
         testingEntity2.getComponent(PhysicsComponent.class).setX(5);
         testingEntity2.getComponent(PhysicsComponent.class).setY(-10);
         testingEntity2.getComponent(PhysicsComponent.class).setBodyType(BodyType.staticBody);
+        testingEntity2.getComponent(PhysicsComponent.class).setShapeHeight(1f);
+        testingEntity2.getComponent(PhysicsComponent.class).setShapeWidth(1f);
 
         gw.addEntity(testingEntity2);
 
