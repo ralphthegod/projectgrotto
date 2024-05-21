@@ -10,6 +10,8 @@ public class PhysicsComponent extends Component {
     private float x = 0, y = 0;
     private float density = 0;
     private float friction = 0;
+    private float shapeHeight = 0;
+    private float shapeWidth = 0;
 
     public Body getBody() {
         return body;
@@ -57,5 +59,21 @@ public class PhysicsComponent extends Component {
 
     public void setFriction(float friction) {
         this.friction = friction;
+    }
+
+    public float getShapeHeight() {
+        return shapeHeight;
+    }
+
+    public void setShapeHeight(float shapeHeight) {
+        this.shapeHeight = shapeHeight;
+    }
+
+    public float getShapeWidth() {
+        return shapeWidth;
+    }
+
+    public void setShapeWidth(float shapeWidth) {
+        this.shapeWidth = shapeWidth;
     }
 }
