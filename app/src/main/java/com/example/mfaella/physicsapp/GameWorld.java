@@ -4,19 +4,15 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Build;
-import android.util.Log;
 
 import com.badlogic.androidgames.framework.Input;
 import com.badlogic.androidgames.framework.Sound;
 import com.badlogic.androidgames.framework.impl.TouchHandler;
-import com.google.fpl.liquidfun.ContactListener;
+import com.deemaso.core.collisions.Collision;
 import com.google.fpl.liquidfun.ParticleSystem;
 import com.google.fpl.liquidfun.ParticleSystemDef;
 import com.google.fpl.liquidfun.World;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -120,14 +116,14 @@ public class GameWorld {
 
     private void handleCollisions(Collection<Collision> collisions) {
         for (Collision event: collisions) {
-            Sound sound = CollisionSounds.getSound(event.a.getClass(), event.b.getClass());
-            if (sound!=null) {
+            //Sound sound = CollisionSounds.getSound(event.a.getClass(), event.b.getClass());
+            /*if (sound!=null) {
                 long currentTime = System.nanoTime();
                 if (currentTime - timeOfLastSound > 500_000_000) {
                     timeOfLastSound = currentTime;
                     sound.play(0.7f);
                 }
-            }
+            }*/
         }
 
     }
