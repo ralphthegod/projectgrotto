@@ -1,9 +1,8 @@
 package com.example.mfaella.physicsapp;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.deemaso.ecs.Entity;
+import com.deemaso.core.Entity;
 import com.google.fpl.liquidfun.Body;
 
 /**
