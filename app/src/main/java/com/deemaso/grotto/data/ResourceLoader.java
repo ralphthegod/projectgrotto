@@ -3,6 +3,7 @@ package com.deemaso.grotto.data;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +28,9 @@ public class ResourceLoader {
             bitmaps.add(loadBitmap(resourceId));
         }
         return bitmaps;
+    }
+
+    public Typeface loadFont(String resource) {
+        return Typeface.createFromAsset(resources.getAssets(), resource);
     }
 }
