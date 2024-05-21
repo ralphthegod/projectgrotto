@@ -8,9 +8,8 @@
         android:label="@string/app_name"
         android:supportsRtl="false">
         <activity
-            android:name="com.example.mfaella.physicsapp.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:name="com.deemaso.grotto.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
