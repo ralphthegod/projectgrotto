@@ -15,11 +15,12 @@ import java.util.List;
 
 public class UIManager implements EventListener<CurrentViewEvent> {
     private final List<UIElement> uiElements = new ArrayList<>();
-    private Box currentView;
+    private Box currentView, screenSize;
     private final Bitmap buffer;
 
-    public UIManager(Bitmap buffer) {
+    public UIManager(Bitmap buffer, Box screenSize) {
         this.buffer = buffer;
+        this.screenSize = screenSize;
     }
 
     public void draw() {
@@ -67,12 +68,9 @@ public class UIManager implements EventListener<CurrentViewEvent> {
     }
 
     private void drawUIElement(UIElement element) {
-        if(element.x > currentView.xmin && element.x < currentView.xmax &&
-                element.y > currentView.ymin && element.y < currentView.ymax) {
-            float screen_x = RenderUtils.toPixelsX(element.x, currentView.xmin, currentView.width, buffer.getWidth());
-            float screen_y = RenderUtils.toPixelsY(element.y, currentView.ymin, currentView.height, buffer.getHeight());
-            element.draw(screen_x, screen_y);
-        }
+        float screen_x = element.x;
+        float screen_y = element.y;
+        element.draw(screen_x, screen_y);
     }
 
     @Override
