@@ -13,10 +13,10 @@ public class GameSpaceTextUIElement extends GameSpaceUIElement {
     private String text;
     private Paint paint;
 
-    public GameSpaceTextUIElement(float x, float y, float width, float height, Entity entity, String text, float textSize, Typeface typeface, int color, Paint paint) {
+    public GameSpaceTextUIElement(float x, float y, float width, float height, Entity entity, String text, float textSize, Typeface typeface, int color) {
         super(x, y, width, height, entity);
         this.text = text;
-        this.paint = paint;
+        this.paint = new Paint();
         this.paint.setTextSize(textSize);
         this.paint.setTypeface(typeface);
         this.paint.setColor(color);
