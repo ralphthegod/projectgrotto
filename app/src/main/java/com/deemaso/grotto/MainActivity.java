@@ -42,9 +42,11 @@ import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
 import com.deemaso.grotto.ui.UIManager;
 import com.deemaso.grotto.ui.elements.GameSpaceTextUIElement;
+import com.deemaso.grotto.ui.elements.TextUIElement;
 import com.example.mfaella.physicsapp.CollisionSounds;
 import com.example.mfaella.physicsapp.R;
 import com.google.fpl.liquidfun.BodyType;
+import com.google.fpl.liquidfun.Vec2;
 
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -94,7 +96,7 @@ public class MainActivity extends Activity {
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         CollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
 
-        UIManager uiManager = new UIManager(renderView.getFrameBuffer());
+        UIManager uiManager = new UIManager(renderView.getFrameBuffer(), screenSize);
 
         // Register the UI manager as a listener for the CurrentViewEvent
         // This event is emitted by the render system when the camera moves
@@ -142,8 +144,7 @@ public class MainActivity extends Activity {
                 "Lvl 1",
                 32,
                 gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
-                Color.WHITE,
-                new Paint()
+                Color.WHITE
         ));
         gw.addEntity(testingEntity);
 
@@ -161,6 +162,17 @@ public class MainActivity extends Activity {
         testingEntity2.getComponent(PhysicsComponent.class).setShapeWidth(1f);
 
         gw.addEntity(testingEntity2);
+
+        gw.getUIManager().addUIElement(new TextUIElement(
+                20,
+                20,
+                0,
+                0,
+                "Grotto",
+                32,
+                gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
+                Color.WHITE
+        ));
 
         /* gw.addGameObject(new EnclosureGO(gw, XMIN, XMAX, YMIN, YMAX));
         gw.addGameObject(new DynamicBoxGO(gw, 0, 0));
