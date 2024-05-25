@@ -6,12 +6,12 @@ import com.deemaso.core.Box;
 
 public abstract class UIElement {
 
-    private Canvas canvas;
+    protected Canvas canvas;
     protected float x;
     protected float y;
-    private float width;
-    private float height;
-    private boolean isVisible = true;
+    protected float width;
+    protected float height;
+    protected boolean isVisible = true;
 
     public UIElement(float x, float y, float width, float height) {
         this.x = x;
