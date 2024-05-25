@@ -1,5 +1,6 @@
 package com.deemaso.grotto.components;
 
+
 import com.deemaso.core.components.Component;
 
 public class CameraComponent extends Component {
@@ -16,4 +17,5 @@ public class CameraComponent extends Component {
     public void setZoom(float zoom) {
         this.zoom = zoom;
     }
+
 }
