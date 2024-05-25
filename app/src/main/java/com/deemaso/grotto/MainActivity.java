@@ -25,6 +25,7 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.impl.AndroidAudio;
 import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
 import com.deemaso.core.EntityManager;
+import com.deemaso.core.collisions.Collision;
 import com.deemaso.core.components.RenderComponent;
 import com.deemaso.core.systems.CollisionSystem;
 import com.deemaso.core.systems.InputSystem;
@@ -33,23 +34,29 @@ import com.deemaso.grotto.components.CameraComponent;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.MusicComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
+import com.deemaso.grotto.data.ResourceLoader;
+import com.deemaso.grotto.events.CollisionEvent;
 import com.deemaso.grotto.events.CurrentViewEvent;
+import com.deemaso.grotto.levelgen.DistributionType;
+import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
+import com.deemaso.grotto.levelgen.LevelGenerationEngine;
 import com.deemaso.grotto.listeners.AccelerometerListener;
+import com.deemaso.grotto.listeners.CollisionListener;
 import com.deemaso.grotto.systems.GrottoCollisionSystem;
 import com.deemaso.grotto.systems.GrottoInputSystem;
 import com.deemaso.grotto.systems.GrottoRenderSystem;
+import com.deemaso.grotto.systems.LevelProgressionSystem;
+import com.deemaso.grotto.systems.LevelSystem;
 import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
 import com.deemaso.grotto.ui.UIManager;
-import com.deemaso.grotto.ui.elements.GameSpaceTextUIElement;
 import com.deemaso.grotto.ui.elements.TextUIElement;
-import com.example.mfaella.physicsapp.CollisionSounds;
 import com.example.mfaella.physicsapp.R;
-import com.google.fpl.liquidfun.BodyType;
-import com.google.fpl.liquidfun.Vec2;
+
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
 
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 public class MainActivity extends Activity {
 
@@ -75,7 +82,7 @@ public class MainActivity extends Activity {
         // Sound
         Audio audio = new AndroidAudio(this);
         //CollisionSounds.init(audio);
-        Music backgroundMusic = audio.newMusic("soundtrack.mp3");
+        //Music backgroundMusic = audio.newMusic("soundtrack.mp3");
         //backgroundMusic.play();
 
         // Game world
@@ -84,19 +91,28 @@ public class MainActivity extends Activity {
         Box physicalSize = new Box(XMIN, YMIN, XMAX, YMAX),
             screenSize   = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
 
-        GrottoGameWorld gw = new GrottoGameWorld(new EntityManager(), this);
+        ResourceLoader resourceLoader = new ResourceLoader(this.getResources());
+
+        GrottoGameWorld gw = new GrottoGameWorld(new GrottoEntityManager(getApplicationContext()), this, resourceLoader);
 
         renderView = new AndroidFastRenderView(this, gw, metrics.widthPixels, metrics.heightPixels);
         setContentView(renderView);
 
+        UIManager uiManager = new UIManager(renderView.getFrameBuffer(), screenSize, getApplicationContext(), resourceLoader);
+        gw.setUIManager(uiManager);
 
         GrottoRenderSystem renderSystem = new GrottoRenderSystem(gw, physicalSize, screenSize, renderView.getFrameBuffer());
-        SoundSystem soundSystem = new SoundSystem(gw);
-        PhysicsSystem physicsSystem = new PhysicsSystem(gw, 8,3,3);
-        InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
-        CollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
+        SoundSystem soundSystem = new SoundSystem(gw, audio);
 
-        UIManager uiManager = new UIManager(renderView.getFrameBuffer(), screenSize);
+        World physicsWorld = new World(new Vec2(0,0));
+        PhysicsSystem physicsSystem = new PhysicsSystem(gw, physicsWorld, 8,3,3);
+        GrottoCollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
+        physicsWorld.setContactListener(collisionSystem.getContactListener());
+
+        InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
+        LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
+        LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
+        collisionSystem.registerListener(CollisionEvent.class, levelProgressionSystem);
 
         // Register the UI manager as a listener for the CurrentViewEvent
         // This event is emitted by the render system when the camera moves
@@ -107,22 +123,26 @@ public class MainActivity extends Activity {
         gw.addSystem(inputSystem);
         gw.addSystem(physicsSystem);
         gw.addSystem(collisionSystem);
-        gw.addSystem(soundSystem);
         //game logic systems
+        gw.addSystem(levelSystem);
+        gw.addSystem(levelProgressionSystem);
+        gw.addSystem(soundSystem);
+        //rendering
         gw.addSystem(renderSystem);
 
+
         // Set the UI manager
-        gw.setUIManager(uiManager);
+
 
         // Entities
-        Entity backgroundMusicEntity = new Entity();
-        backgroundMusicEntity.addComponent(new MusicComponent(backgroundMusic));
+        Entity backgroundMusicEntity = new Entity("0");
+        //backgroundMusicEntity.addComponent(new MusicComponent(backgroundMusic));
         gw.addEntity(backgroundMusicEntity);
 
-        Entity testingEntity = new Entity();
+        Entity testingEntity = new Entity("1");
         GrottoRenderComponent grottoRenderComponent = new GrottoRenderComponent();
-        grottoRenderComponent.setResourceIds(Arrays.asList(R.drawable.angel_idle_anim_f0, R.drawable.angel_idle_anim_f1, R.drawable.angel_idle_anim_f2, R.drawable.angel_idle_anim_f3));
-        grottoRenderComponent.setAnimationFrameDuration(0.1f);
+
+        /*grottoRenderComponent.setAnimationFrameDuration(0.1f);
         grottoRenderComponent.setHeight(2.5f);
         grottoRenderComponent.setWidth(2.5f);
         testingEntity.addComponent(grottoRenderComponent);
@@ -146,22 +166,9 @@ public class MainActivity extends Activity {
                 gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
                 Color.WHITE
         ));
-        gw.addEntity(testingEntity);
+        gw.addEntity(testingEntity);*/
 
-        Entity testingEntity2 = new Entity();
-        GrottoRenderComponent grottoRenderComponent2 = new GrottoRenderComponent();
-        grottoRenderComponent2.setResourceIds(Arrays.asList(R.drawable.column));
-        grottoRenderComponent2.setHeight(4f);
-        grottoRenderComponent2.setWidth(2f);
-        testingEntity2.addComponent(grottoRenderComponent2);
-        testingEntity2.addComponent(new PhysicsComponent());
-        testingEntity2.getComponent(PhysicsComponent.class).setX(5);
-        testingEntity2.getComponent(PhysicsComponent.class).setY(-10);
-        testingEntity2.getComponent(PhysicsComponent.class).setBodyType(BodyType.staticBody);
-        testingEntity2.getComponent(PhysicsComponent.class).setShapeHeight(1f);
-        testingEntity2.getComponent(PhysicsComponent.class).setShapeWidth(1f);
-
-        gw.addEntity(testingEntity2);
+        //gw.addEntity(gw.createEntityById(1));
 
         gw.getUIManager().addUIElement(new TextUIElement(
                 20,
@@ -173,6 +180,16 @@ public class MainActivity extends Activity {
                 gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
                 Color.WHITE
         ));
+
+        /*List<LevelGenerationElementDefinition> elementDefinitions = Arrays.asList(
+                new LevelGenerationElementDefinition('M', "monster", 40, 40, true, true, DistributionType.SPARSE),
+                new LevelGenerationElementDefinition('^', "spikes", 100,200,true, false, DistributionType.CLUSTERED),
+                new LevelGenerationElementDefinition('G', "gold", 100, 200, true, true, DistributionType.SPARSE),
+                new LevelGenerationElementDefinition('B', "boss", 1, 1, true, false, DistributionType.SPARSE)
+        );*/
+        //LevelGenerationEngine levelGenerationEngine = new LevelGenerationEngine(100, 100, 4, 13, 20, elementDefinitions);
+        //levelGenerationEngine.generateDungeon();
+        //levelGenerationEngine.printDungeon();
 
         /* gw.addGameObject(new EnclosureGO(gw, XMIN, XMAX, YMIN, YMAX));
         gw.addGameObject(new DynamicBoxGO(gw, 0, 0));
