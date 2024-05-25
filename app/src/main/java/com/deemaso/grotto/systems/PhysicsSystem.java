@@ -2,7 +2,6 @@ package com.deemaso.grotto.systems;
 
 import android.util.Log;
 
-import com.deemaso.core.ComponentFactory;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.RenderComponent;
@@ -13,12 +12,14 @@ import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.events.PhysicsWorldEvent;
-import com.google.fpl.liquidfun.Body;
-import com.google.fpl.liquidfun.BodyDef;
-import com.google.fpl.liquidfun.BodyType;
-import com.google.fpl.liquidfun.FixtureDef;
-import com.google.fpl.liquidfun.PolygonShape;
-import com.google.fpl.liquidfun.World;
+
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.World;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class PhysicsSystem extends System implements EventEmitter {
 
     public PhysicsSystem(
             GameWorld gameWorld,
+            World physicsWorld,
             int velocityIterations,
             int positionIterations,
             int particleIterations
@@ -54,18 +56,18 @@ public class PhysicsSystem extends System implements EventEmitter {
         this.velocityIterations = velocityIterations;
         this.positionIterations = positionIterations;
         this.particleIterations = particleIterations;
-        physicsWorld = new World(0, 0);
+        this.physicsWorld = physicsWorld;
     }
 
     @Override
     public void update(float dt) {
 
         if(isGravityChanged) {
-            physicsWorld.setGravity(gravityX, gravityY);
+            physicsWorld.setGravity(new Vec2(gravityX, gravityY));
             isGravityChanged = false;
         }
 
-        physicsWorld.step(dt, velocityIterations, positionIterations, particleIterations);
+        physicsWorld.step(dt, velocityIterations, positionIterations);
 
         // Emit a PhysicsWorldEvent for other systems to listen to
         emitEvent(new PhysicsWorldEvent(physicsWorld));
@@ -82,8 +84,8 @@ public class PhysicsSystem extends System implements EventEmitter {
             // Create a body for the entity
             PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
             BodyDef bodyDef = new BodyDef();
-            bodyDef.setPosition(physics.getX(), physics.getY());
-            bodyDef.setType(physics.getBodyType() == null ? BodyType.dynamicBody : physics.getBodyType());
+            bodyDef.position.set(physics.getX(), physics.getY());
+            bodyDef.type = physics.getBodyType() == BodyType.STATIC ? BodyType.STATIC : BodyType.DYNAMIC;
             physics.setBody(physicsWorld.createBody(bodyDef));
             Body body = physics.getBody();
             body.setSleepingAllowed(false);
@@ -99,15 +101,12 @@ public class PhysicsSystem extends System implements EventEmitter {
                 box.setAsBox(1, 1);
             }
             FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.setShape(box);
-            fixtureDef.setFriction(physics.getFriction());
-            fixtureDef.setRestitution(0.4f);
-            fixtureDef.setDensity(physics.getDensity());
+            fixtureDef.shape = box;
+            fixtureDef.density = physics.getDensity();
+            fixtureDef.friction = physics.getFriction();
+            fixtureDef.restitution = 0.3f;
+            fixtureDef.isSensor = physics.isSensor();
             body.createFixture(fixtureDef);
-
-            fixtureDef.delete();
-            bodyDef.delete();
-            box.delete();
         }
         return hasBeenAdded;
     }
@@ -120,7 +119,7 @@ public class PhysicsSystem extends System implements EventEmitter {
 
     @Override
     protected void finalize() {
-        physicsWorld.delete();
+        physicsWorld.clearForces();
     }
 
     @Override
@@ -138,17 +137,7 @@ public class PhysicsSystem extends System implements EventEmitter {
         return listeners;
     }
 
-    /*
-     * Register the PhysicsComponent within the ComponentFactory
-     */
-    static {
-        ComponentFactory.registerComponent(
-            "PhysicsComponent",
-            element -> {
-                return new PhysicsComponent();
-            }
-        );
-    }
+
 
 
 }
