@@ -1,0 +1,12 @@
+<Entity id="23">
+    <Component name="GrottoRenderComponent" animationFrameDuration="0.0" height="1" width="1"  zIndex="0">
+        <sprites>
+            <sprite>
+                sprites/floor_spikes_anim_f3.png
+            </sprite>
+        </sprites>
+    </Component>
+    <Component name="NavigationComponent" isWalkable="false" isFlyable="true"/>
+    <Component name="TileComponent"/>
+    <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4" isSensor="true"/>
+</Entity>

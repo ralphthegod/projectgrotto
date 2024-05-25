@@ -1,0 +1,11 @@
+<Entity id="8">
+    <Component name="GrottoRenderComponent" animationFrameDuration="0.0" zIndex="0" height="1" width="1" >
+        <sprites>
+            <sprite>
+                sprites/floor_7.png
+            </sprite>
+        </sprites>
+    </Component>
+    <Component name="NavigationComponent" isWalkable="true" isFlyable="true"/>
+    <Component name="TileComponent"/>
+</Entity>

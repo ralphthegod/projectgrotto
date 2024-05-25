@@ -1,0 +1,11 @@
+<Entity id="14">
+    <Component name="GrottoRenderComponent" animationFrameDuration="0.0" height="1" width="1" zIndex="0">
+        <sprites>
+            <sprite>
+                sprites/edge_down.png
+            </sprite>
+        </sprites>
+    </Component>
+    <Component name="PhysicsComponent" density="0.5" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4"/>
+    <Component name="NavigationComponent" isWalkable="false" isFlyable="false"/>
+</Entity>
