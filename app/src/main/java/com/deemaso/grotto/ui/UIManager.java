@@ -1,26 +1,52 @@
 package com.deemaso.grotto.ui;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.util.Log;
 
 import com.deemaso.core.Box;
+import com.deemaso.core.Entity;
 import com.deemaso.core.components.TransformComponent;
 import com.deemaso.core.events.EventListener;
 import com.deemaso.grotto.components.PhysicsComponent;
+import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.events.CurrentViewEvent;
+import com.deemaso.grotto.ui.elements.LevelLabel;
+import com.deemaso.grotto.utils.Helpers;
 import com.deemaso.grotto.utils.RenderUtils;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class UIManager implements EventListener<CurrentViewEvent> {
     private final List<UIElement> uiElements = new ArrayList<>();
     private Box currentView, screenSize;
     private final Bitmap buffer;
 
-    public UIManager(Bitmap buffer, Box screenSize) {
+    private final UIFactory uiFactory;
+
+    private final Context context;
+
+    private final ResourceLoader resourceLoader;
+
+    public UIManager(Bitmap buffer, Box screenSize, Context context, ResourceLoader resourceLoader) {
         this.buffer = buffer;
         this.screenSize = screenSize;
+        this.context = context;
+        this.resourceLoader = resourceLoader;
+        this.uiFactory = new UIFactory();
+        loadUIFactoryCreators();
     }
 
     public void draw() {
@@ -53,10 +79,10 @@ public class UIManager implements EventListener<CurrentViewEvent> {
         else if(element.getEntity().hasComponent(PhysicsComponent.class)){
             PhysicsComponent physicsComponent = element.getEntity().getComponent(PhysicsComponent.class);
             // Consider the offset of the element (element.x, element.y)
-            x = physicsComponent.getBody().getPositionX() + element.getX();
-            y = physicsComponent.getBody().getPositionY() + element.getY();
+            x = physicsComponent.getBody().getPosition().x + element.getX();
+            y = physicsComponent.getBody().getPosition().y + element.getY();
         }else{
-            throw new RuntimeException("Cannot draw GameSpaceTextUIElement without a TransformComponent.");
+            throw new RuntimeException("Cannot draw GameSpaceUIElement without a TransformComponent.");
         }
 
         if(x > currentView.xmin && x < currentView.xmax &&
@@ -83,7 +109,54 @@ public class UIManager implements EventListener<CurrentViewEvent> {
         uiElements.add(element);
     }
 
+    public void createEntityGameSpaceUIElements(Entity entity) {
+        try {
+            InputStream inputStream = context.getAssets().open("archetypes/" + entity.getId() + ".xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputStream);
+            doc.getDocumentElement().normalize();
+
+            NodeList uiElements = doc.getElementsByTagName("UI");
+            for (int i = 0; i < uiElements.getLength(); i++) {
+                Element uiElement = (Element) uiElements.item(i);
+                String elementType = uiElement.getAttribute("name");
+                UIElement element = uiFactory.createUIElement(elementType, uiElement, entity);
+                addUIElement(element);
+            }
+
+        } catch (Exception e) {
+            Log.d("UIManager", "Error loading entity UI elements: " + entity.getId() + ".xml");
+            e.printStackTrace();
+        }
+    }
+
+    public void removeEntityGameSpaceUIElements(Entity entity) {
+        List<GameSpaceUIElement> elementsToRemove = new ArrayList<>();
+        for (UIElement element : uiElements) {
+            if (element instanceof GameSpaceUIElement) {
+                GameSpaceUIElement gameSpaceUIElement = (GameSpaceUIElement) element;
+                if (gameSpaceUIElement.getEntity().equals(entity)) {
+                    elementsToRemove.add(gameSpaceUIElement);
+                }
+            }
+        }
+        uiElements.removeAll(elementsToRemove);
+    }
+
     public void removeUIElement(UIElement element) {
         uiElements.remove(element);
     }
+
+    private void loadUIFactoryCreators() {
+        uiFactory.registerUIElement("LevelLabel", (element, entity) -> {
+            float x = Helpers.getAttributeAsFloat(element, "x", 0);
+            float y = Helpers.getAttributeAsFloat(element, "y", 0);
+            float textSize = Helpers.getAttributeAsFloat(element, "textSize", 20);
+            int color = Color.parseColor(Helpers.getAttributeAsString(element, "color", "0xFFFFFFFF"));
+            Typeface typeface = resourceLoader.loadFont(Helpers.getAttributeAsString(element, "typeface", "default"));
+            return new LevelLabel(x, y, 0, 0, entity, "", textSize, typeface, color);
+        });
+    }
+
 }
