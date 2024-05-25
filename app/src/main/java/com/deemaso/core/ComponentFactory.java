@@ -6,17 +6,17 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 public class ComponentFactory {
-    static private final Map<String, ComponentCreator> creators = new HashMap<>();
+    private final Map<String, ComponentCreator> creators = new HashMap<>();
 
     public interface ComponentCreator {
         Component create(Element element);
     }
 
-    static public void registerComponent(String name, ComponentCreator creator) {
+    public void registerComponent(String name, ComponentCreator creator) {
         creators.put(name, creator);
     }
 
-    static public Component createComponent(String name, Element element) {
+    public Component createComponent(String name, Element element) {
         if (creators.containsKey(name)) {
             ComponentCreator cc = creators.get(name);
             if(cc != null) {
