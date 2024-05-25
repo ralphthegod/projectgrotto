@@ -1,5 +1,8 @@
 package com.deemaso.grotto.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+
 public class RenderUtils {
 
     static public float toMetersX(float x, float minX, float width, float screenWidth) {
@@ -24,6 +27,20 @@ public class RenderUtils {
 
     static public float toPixelsYLength(float y, float height, int bufferHeight) {
         return y/height*bufferHeight;
+    }
+
+    static public Bitmap flipBitmap(Bitmap bitmap, boolean horizontal) {
+        Matrix matrix = new Matrix();
+        if(horizontal) {
+            matrix.preScale(-1.0f, 1.0f);
+            matrix.setScale(-1, 1);
+            matrix.postTranslate(bitmap.getWidth(), 0);
+        } else {
+            matrix.preScale(1.0f, -1.0f);
+            matrix.setScale(1, -1);
+            matrix.postTranslate(0, bitmap.getHeight());
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
 }
