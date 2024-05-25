@@ -10,7 +10,7 @@ import com.deemaso.grotto.utils.RenderUtils;
 
 public abstract class GameSpaceUIElement extends UIElement{
 
-    private final Entity entity;
+    protected final Entity entity;
 
     public GameSpaceUIElement(float x, float y, float width, float height, Entity entity) {
         super(x, y, width, height);
