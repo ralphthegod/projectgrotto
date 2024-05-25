@@ -2,13 +2,11 @@ package com.deemaso.grotto;
 
 import android.app.Activity;
 
+import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.EntityManager;
-import com.deemaso.core.systems.System;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.ui.UIManager;
-
-import java.util.List;
 
 public class GrottoGameWorld extends GameWorld{
 
@@ -16,10 +14,10 @@ public class GrottoGameWorld extends GameWorld{
     final private ResourceLoader resourceLoader;
     private UIManager uiManager;
 
-    public GrottoGameWorld(EntityManager entityManager, Activity activity) {
+    public GrottoGameWorld(EntityManager entityManager, Activity activity, ResourceLoader resourceLoader) {
         super(entityManager);
         this.activity = activity;
-        this.resourceLoader = new ResourceLoader(activity.getResources());
+        this.resourceLoader = resourceLoader;
     }
 
     public void setUIManager(UIManager uiManager) {
@@ -35,6 +33,22 @@ public class GrottoGameWorld extends GameWorld{
         super.update(dt);
         if(uiManager != null) {
             uiManager.draw();
+        }
+    }
+
+    @Override
+    public void addEntity(Entity entity) {
+        super.addEntity(entity);
+        if(uiManager != null) {
+            uiManager.createEntityGameSpaceUIElements(entity);
+        }
+    }
+
+    @Override
+    public void markEntityForDeletion(Entity e) {
+        super.markEntityForDeletion(e);
+        if(uiManager != null) {
+            uiManager.removeEntityGameSpaceUIElements(e);
         }
     }
 
