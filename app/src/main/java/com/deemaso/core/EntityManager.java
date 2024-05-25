@@ -1,5 +1,8 @@
 package com.deemaso.core;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.deemaso.core.components.Component;
 
 import org.w3c.dom.Document;
@@ -7,6 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +20,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * Manages entities and their components.
  */
-public class EntityManager {
+public abstract class EntityManager {
     private List<Entity> entities = new ArrayList<Entity>();
     private List<Entity> entitiesToDelete = new ArrayList<Entity>();
+
+    protected final ComponentFactory componentFactory = new ComponentFactory();
 
     public void addEntity(Entity e) {
         entities.add(e);
@@ -32,29 +38,10 @@ public class EntityManager {
         return entitiesToDelete;
     }
 
-    public Entity createEntityById(String id) {
-        try {
-            File file = new File("path/to/your/xml/" + id + ".xml");
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(file);
-            doc.getDocumentElement().normalize();
+    public abstract Entity createEntityById(String id);
 
-            Entity entity = new Entity();
-
-            NodeList components = doc.getElementsByTagName("Component");
-            for (int i = 0; i < components.getLength(); i++) {
-                Element componentElement = (Element) components.item(i);
-                String componentName = componentElement.getAttribute("name");
-                Component component = ComponentFactory.createComponent(componentName, componentElement);
-                entity.addComponent(component);
-            }
-
-            return entity;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    protected EntityManager(){
+        loadComponentFactoryCreators();
     }
 
     public void removeMarkedEntities() {
@@ -63,6 +50,8 @@ public class EntityManager {
         }
         entitiesToDelete.clear();
     }
+
+    abstract protected void loadComponentFactoryCreators();
 }
 
 /*
