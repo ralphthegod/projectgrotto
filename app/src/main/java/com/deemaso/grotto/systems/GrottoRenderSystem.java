@@ -15,16 +15,17 @@ import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.events.CurrentViewEvent;
 import com.deemaso.grotto.utils.RenderUtils;
-import com.google.fpl.liquidfun.Body;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.util.Log;
+
+import org.jbox2d.dynamics.Body;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
     ) {
         super(
                 gameWorld,
-                Arrays.asList(GrottoRenderComponent.class, PhysicsComponent.class),
+                Arrays.asList(GrottoRenderComponent.class),
                 physicalSize,
                 screenSize
         );
@@ -73,9 +74,11 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
 
         if (gameWorld instanceof GrottoGameWorld) {
             ResourceLoader resourceLoader = ((GrottoGameWorld) gameWorld).getResourceLoader();
-            render.setBitmaps(resourceLoader.loadBitmaps(render.getResourceIds()));
+            render.setBitmaps(resourceLoader.loadBitmapAssets(render.getResourceIds()));
             render.getSrc().set(0, 0, render.getBitmap(0).getWidth(), render.getBitmap(0).getHeight());
         }
+
+        sortEntitiesByZIndex();
 
         return true;
     }
@@ -100,19 +103,34 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
     }
 
     @Override
+    protected void sortEntitiesByZIndex() {
+        Collections.sort(entities, new Comparator<Entity>() {
+            @Override
+            public int compare(Entity e1, Entity e2) {
+                GrottoRenderComponent r1 = e1.getComponent(GrottoRenderComponent.class);
+                GrottoRenderComponent r2 = e2.getComponent(GrottoRenderComponent.class);
+                return r1.getZIndex() - r2.getZIndex();
+            }
+        });
+    }
+
+    @Override
     public boolean draw(Entity entity, float deltaTime) {
         RenderComponent render = entity.getComponent(GrottoRenderComponent.class);
         PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-        // Only last created camera component is considered
+        // Only the last created camera component is considered
         CameraComponent camera = entity.getComponent(CameraComponent.class);
 
-        final Body body = physics.getBody();
+        Body body = null;
+        if(physics != null) {
+            body = physics.getBody();
+        }
         if(body != null) {
-            float x = body.getPositionX();
-            float y = body.getPositionY();
+            float x = body.getPosition().x;
+            float y = body.getPosition().y;
             float angle = body.getAngle();
-            float velocityX = body.getLinearVelocity().getX();
-            float velocityY = body.getLinearVelocity().getY();
+            float velocityX = body.getLinearVelocity().x;
+            float velocityY = body.getLinearVelocity().y;
 
             if(camera != null){
                 final float zoom = camera.getZoom();
@@ -134,8 +152,15 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
             }
         }
         else{
-            draw(render, 0, 0, 0, 0, 0, deltaTime);
-            return true;
+            float x = render.getX();
+            float y = render.getY();
+            if(x > currentView.xmin && x < currentView.xmax &&
+                    y > currentView.ymin && y < currentView.ymax) {
+                float screen_x = RenderUtils.toPixelsX(x, currentView.xmin, currentView.width, buffer.getWidth());
+                float screen_y = RenderUtils.toPixelsY(y, currentView.ymin, currentView.height, buffer.getHeight());
+                draw(render, screen_x, screen_y, 0, 0, 0, deltaTime);
+                return true;
+            }
         }
         return false;
     }
@@ -144,15 +169,7 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
         GrottoRenderComponent grottoRender = (GrottoRenderComponent) render;
         grottoRender.getCanvas().save();
         grottoRender.getCanvas().rotate((float) Math.toDegrees(angle), x, y);
-        Bitmap nextFrame = grottoRender.getNextFrame(deltaTime);
-
-        // Flip the bitmap if the entity is moving to the left (do it only if the entity has a related component)
-        if (velocityX < 0) {
-            Matrix flipHorizontalMatrix = new Matrix();
-            flipHorizontalMatrix.setScale(-1, 1);
-            flipHorizontalMatrix.postTranslate(nextFrame.getWidth(), 0);
-            nextFrame = Bitmap.createBitmap(nextFrame, 0, 0, nextFrame.getWidth(), nextFrame.getHeight(), flipHorizontalMatrix, true);
-        }
+        Bitmap nextFrame = grottoRender.getNextFrame(deltaTime, velocityX < 0);
 
         grottoRender.getDst().set(
                 x - grottoRender.getScreenSemiWidth(),
