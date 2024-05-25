@@ -1,8 +1,9 @@
 package com.deemaso.grotto.components;
 
 import com.deemaso.core.components.Component;
-import com.google.fpl.liquidfun.Body;
-import com.google.fpl.liquidfun.BodyType;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyType;
+
 
 public class PhysicsComponent extends Component {
     private Body body;
@@ -10,8 +11,10 @@ public class PhysicsComponent extends Component {
     private float x = 0, y = 0;
     private float density = 0;
     private float friction = 0;
+    private boolean isSensor;
     private float shapeHeight = 0;
     private float shapeWidth = 0;
+
 
     public Body getBody() {
         return body;
@@ -75,5 +78,13 @@ public class PhysicsComponent extends Component {
 
     public void setShapeWidth(float shapeWidth) {
         this.shapeWidth = shapeWidth;
+    }
+
+    public boolean isSensor() {
+        return isSensor;
+    }
+
+    public void setSensor(boolean sensor) {
+        isSensor = sensor;
     }
 }
