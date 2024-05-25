@@ -26,4 +26,12 @@ public class Collision {
         return (a.equals(otherCollision.a) && b.equals(otherCollision.b)) ||
                (a.equals(otherCollision.b) && b.equals(otherCollision.a));
     }
+
+    public Entity getA() {
+        return a;
+    }
+
+    public Entity getB() {
+        return b;
+    }
 }
