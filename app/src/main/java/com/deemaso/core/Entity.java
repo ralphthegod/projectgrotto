@@ -7,8 +7,14 @@ import java.util.List;
 
 public class Entity {
 
+    final private String id;
+
     /** A map of components that the entity has. */
     final private HashMap<Class<? extends Component>, Component> componentMap = new HashMap<>();
+
+    public Entity(String id) {
+        this.id = id;
+    }
 
     /** Adds a component to the entity. Components order is important when initializing them.*/
     public void addComponent(Component c) {
@@ -30,5 +36,9 @@ public class Entity {
             }
         }
         return true;
+    }
+
+    public String getId() {
+        return id;
     }
 }
