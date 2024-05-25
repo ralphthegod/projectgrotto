@@ -9,6 +9,8 @@ import com.deemaso.core.components.RenderComponent;
 import com.deemaso.core.Entity;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /*
@@ -47,6 +49,8 @@ public abstract class RenderSystem extends System {
             draw(e, deltaTime);
         }
     }
+
+    protected abstract void sortEntitiesByZIndex();
 
     public abstract boolean draw(
             Entity entity,
