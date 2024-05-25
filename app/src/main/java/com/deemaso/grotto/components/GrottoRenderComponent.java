@@ -8,7 +8,9 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.deemaso.core.components.RenderComponent;
+import com.deemaso.grotto.utils.RenderUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GrottoRenderComponent extends RenderComponent {
@@ -20,8 +22,9 @@ public class GrottoRenderComponent extends RenderComponent {
     private Paint paint;
 
     private List<Bitmap> bitmap;
+    private List<Bitmap> horizontalFlipBitmap;
 
-    private List<Integer> resourceIds;
+    private List<String> resourceIds;
     private int currentFrame = 0;
     private float lastFrameTime = 0.0f;
     private float animationFrameDuration;
@@ -81,11 +84,11 @@ public class GrottoRenderComponent extends RenderComponent {
         this.bitmap = bitmap;
     }
 
-    public List<Integer> getResourceIds() {
+    public List<String> getResourceIds() {
         return resourceIds;
     }
 
-    public void setResourceIds(List<Integer> resourceIds) {
+    public void setResourceIds(List<String> resourceIds) {
         this.resourceIds = resourceIds;
     }
 
@@ -105,15 +108,33 @@ public class GrottoRenderComponent extends RenderComponent {
         this.animationFrameDuration = animationFrameDuration;
     }
 
-    public Bitmap getNextFrame(float deltaTime) {
+    public Bitmap getNextFrame(float deltaTime, boolean flipHorizontal) {
+        if(bitmap.size() == 1) {
+            if(flipHorizontal) {
+                if(horizontalFlipBitmap == null || horizontalFlipBitmap.isEmpty()) {
+                    horizontalFlipBitmap = new ArrayList<>();
+                    horizontalFlipBitmap.add(RenderUtils.flipBitmap(bitmap.get(0), true));
+                }
+                return horizontalFlipBitmap.get(0);
+            }
+            return bitmap.get(0);
+        }
         lastFrameTime += deltaTime;
         if (lastFrameTime >= animationFrameDuration) {
-            if (bitmap == null || bitmap.isEmpty()) {
-                Log.e("GrottoRenderComponent", "No bitmaps loaded");
-                return null;
-            }
-            currentFrame = (currentFrame + 1) % bitmap.size();
             lastFrameTime = 0.0f;
+            currentFrame++;
+            if (currentFrame >= bitmap.size()) {
+                currentFrame = 0;
+            }
+        }
+        if(flipHorizontal) {
+            if(horizontalFlipBitmap == null || horizontalFlipBitmap.isEmpty()) {
+                horizontalFlipBitmap = new ArrayList<>();
+                for (Bitmap b : bitmap) {
+                    horizontalFlipBitmap.add(RenderUtils.flipBitmap(b, true));
+                }
+            }
+            return horizontalFlipBitmap.get(currentFrame);
         }
         return bitmap.get(currentFrame);
     }
