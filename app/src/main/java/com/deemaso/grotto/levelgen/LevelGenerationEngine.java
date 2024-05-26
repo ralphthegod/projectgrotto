@@ -221,18 +221,39 @@ public class LevelGenerationEngine {
     }
 
     /**
-     * Fills any empty spaces inside rooms with floor tiles.
+     * Fills any empty spaces inside rooms or tunnels with floor tiles.
      */
     private void fillRoomHoles() {
-        for (Room room : rooms) {
-            for (int x = room.x; x < room.x + room.w; x++) {
-                for (int y = room.y; y < room.y + room.h; y++) {
-                    if (grid[y][x] == EMPTY) {
-                        grid[y][x] = FLOOR;
-                    }
+        for (int y = 0; y < gridHeight; y++) {
+            for (int x = 0; x < gridWidth; x++) {
+                if (grid[y][x] == EMPTY && isSurroundedByFloor(x, y)) {
+                    grid[y][x] = FLOOR;
                 }
             }
         }
+    }
+
+    /**
+     * Checks if a position is surrounded by floor tiles.
+     *
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @return true if the position is surrounded by floor tiles, false otherwise
+     */
+    private boolean isSurroundedByFloor(int x, int y) {
+        int[] dx = {-1, 0, 1, 0};
+        int[] dy = {0, 1, 0, -1};
+
+        for (int i = 0; i < 4; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight || grid[newY][newX] != FLOOR) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -247,7 +268,7 @@ public class LevelGenerationEngine {
     private boolean canPlaceElementAtPosition(int x, int y, List<int[]> placedPositions, int minDistance) {
         for (int[] pos : placedPositions) {
             int distance = calculateManhattanDistance(x, y, pos[0], pos[1]);
-            Log.d("LevelGen", "Checking position (" + x + ", " + y + ") against (" + pos[0] + ", " + pos[1] + ") with distance " + distance);
+            // Log.d("LevelGen", "Checking position (" + x + ", " + y + ") against (" + pos[0] + ", " + pos[1] + ") with distance " + distance);
             if (distance <= minDistance) {
                 return false;
             }
@@ -310,7 +331,7 @@ public class LevelGenerationEngine {
                     grid[y][x] = elementDef.getSymbol();
                     placedPositions.add(new int[]{x, y});
                     placedQuantity++;
-                    Log.d("LevelGen", "Placed element at (" + x + ", " + y + ")");
+                    // Log.d("LevelGen", "Placed element at (" + x + ", " + y + ")");
                 }
             }
         }
