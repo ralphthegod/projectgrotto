@@ -1,5 +1,6 @@
 package com.deemaso.core;
 
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 
 import java.util.ArrayList;
@@ -26,6 +27,12 @@ public class GameWorld {
         entityManager.addEntity(entity);
         for(System s : systems) {
             s.registerEntity(entity);
+        }
+    }
+
+    public void broadcastEvent(SystemEvent event) {
+        for(System s : systems) {
+            s.onEvent(event);
         }
     }
 

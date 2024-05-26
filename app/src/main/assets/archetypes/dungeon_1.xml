@@ -219,6 +219,27 @@
             </TileArchetypes>
         </ElementDefinition>
         <ElementDefinition
+            symbol="C"
+            name="chest"
+            globalMinQuantity="1"
+            globalMaxQuantity="3"
+            canBeInRoom="true"
+            canBeInCorridor="false"
+            minDistanceBetweenElements="0"
+            distribution="1">
+            <TileArchetypes>
+                <TileArchetype
+                    probability="1"
+                    archetypeId="chest"
+                    baseArchetypeId="floor_1"
+                    topArchetypeId="-1"
+                    rightArchetypeId="-1"
+                    bottomArchetypeId="-1"
+                    leftArchetypeId="-1"
+                />
+            </TileArchetypes>
+        </ElementDefinition>
+        <ElementDefinition
             symbol="^"
             name="spike"
             globalMinQuantity="50"

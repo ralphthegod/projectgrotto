@@ -16,5 +16,5 @@
         </sprites>
     </Component>
     <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.15" shapeWidth="0.15" isSensor="true"/>
-    <Component name="LootComponent" lootValue="1"/>
+    <Component name="LootComponent" lootValue="1" removeAfterCollecting="true"/>
 </Entity>

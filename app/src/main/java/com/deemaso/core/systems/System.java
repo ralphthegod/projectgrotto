@@ -5,11 +5,13 @@ import android.util.Log;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.Component;
+import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class System {
+public abstract class System implements EventListener {
 
     final protected GameWorld gameWorld;
     final protected List<Entity> entities = new ArrayList<>();

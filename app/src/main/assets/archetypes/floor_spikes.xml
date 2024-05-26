@@ -8,5 +8,6 @@
     </Component>
     <Component name="NavigationComponent" isWalkable="false" isFlyable="true"/>
     <Component name="TileComponent"/>
-    <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4" isSensor="true"/>
+    <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.2" shapeWidth="0.2" isSensor="true"/>
+    <Component name="LootComponent" lootValue="-2" removeAfterCollecting="false"/>
 </Entity>
