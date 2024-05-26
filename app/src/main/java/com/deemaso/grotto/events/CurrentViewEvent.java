@@ -1,9 +1,8 @@
 package com.deemaso.grotto.events;
 
 import com.deemaso.core.Box;
-import com.deemaso.core.events.Event;
 
-public class CurrentViewEvent implements Event {
+public class CurrentViewEvent {
     private final Box currentView;
 
     public CurrentViewEvent(Box currentView) {

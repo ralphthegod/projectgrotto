@@ -1,9 +1,8 @@
 package com.deemaso.grotto.events;
 
 import com.deemaso.core.collisions.Collision;
-import com.deemaso.core.events.Event;
 
-public class CollisionEvent implements Event {
+public class CollisionEvent {
 
     private final Collision collision;
 
