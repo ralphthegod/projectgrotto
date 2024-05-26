@@ -2,6 +2,7 @@ package com.deemaso.grotto.ui.elements;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.deemaso.core.Entity;
 import com.deemaso.grotto.ui.UIElement;
