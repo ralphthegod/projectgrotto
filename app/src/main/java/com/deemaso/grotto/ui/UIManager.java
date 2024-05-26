@@ -11,10 +11,11 @@ import com.deemaso.core.Box;
 import com.deemaso.core.Entity;
 import com.deemaso.core.components.TransformComponent;
 import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
+import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.data.ResourceLoader;
-import com.deemaso.grotto.events.CurrentViewEvent;
-import com.deemaso.grotto.ui.elements.LevelLabel;
+import com.deemaso.grotto.ui.elements.LevelLabelUIElement;
 import com.deemaso.grotto.utils.Helpers;
 import com.deemaso.grotto.utils.RenderUtils;
 
@@ -29,9 +30,9 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-public class UIManager implements EventListener<CurrentViewEvent> {
+public class UIManager implements EventListener {
     private final List<UIElement> uiElements = new ArrayList<>();
-    private Box currentView, screenSize;
+    private Box currentView;
     private final Bitmap buffer;
 
     private final UIFactory uiFactory;
@@ -42,7 +43,6 @@ public class UIManager implements EventListener<CurrentViewEvent> {
 
     public UIManager(Bitmap buffer, Box screenSize, Context context, ResourceLoader resourceLoader) {
         this.buffer = buffer;
-        this.screenSize = screenSize;
         this.context = context;
         this.resourceLoader = resourceLoader;
         this.uiFactory = new UIFactory();
@@ -99,11 +99,6 @@ public class UIManager implements EventListener<CurrentViewEvent> {
         element.draw(screen_x, screen_y);
     }
 
-    @Override
-    public void onEventReceived(CurrentViewEvent event) {
-        currentView = event.getCurrentView();
-    }
-
     public void addUIElement(UIElement element) {
         element.setCanvas(new Canvas(buffer));
         uiElements.add(element);
@@ -155,8 +150,22 @@ public class UIManager implements EventListener<CurrentViewEvent> {
             float textSize = Helpers.getAttributeAsFloat(element, "textSize", 20);
             int color = Color.parseColor(Helpers.getAttributeAsString(element, "color", "0xFFFFFFFF"));
             Typeface typeface = resourceLoader.loadFont(Helpers.getAttributeAsString(element, "typeface", "default"));
-            return new LevelLabel(x, y, 0, 0, entity, "", textSize, typeface, color);
+            return new LevelLabelUIElement(x, y, 0, 0, entity, "Lvl " + entity.getComponent(CharacterStatsComponent.class).getLevel(), textSize, typeface, color);
         });
     }
 
+    @Override
+    public void onEvent(SystemEvent event) {
+        // Update the current view
+        if(event.getCode().equals("CURRENT_VIEW")){
+            currentView = (Box) event.get("currentView");
+        }
+
+        // Broadcast the event to all UIElements that are EventListeners
+        for(UIElement element : uiElements){
+            if(element instanceof EventListener){
+                ((EventListener) element).onEvent(event);
+            }
+        }
+    }
 }

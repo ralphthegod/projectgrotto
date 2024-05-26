@@ -4,6 +4,9 @@ import android.graphics.Canvas;
 
 import com.deemaso.core.Box;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class UIElement {
 
     protected Canvas canvas;
@@ -12,6 +15,7 @@ public abstract class UIElement {
     protected float width;
     protected float height;
     protected boolean isVisible = true;
+    protected List<UIElement> children = new ArrayList<>();
 
     public UIElement(float x, float y, float width, float height) {
         this.x = x;
@@ -20,7 +24,11 @@ public abstract class UIElement {
         this.height = height;
     }
 
-    public abstract void draw(float screenX, float screenY);
+    public void draw(float screenX, float screenY){
+        for (UIElement child : children) {
+            child.draw(screenX + child.x, screenY + child.y);
+        }
+    }
 
     public float getX() {
         return x;
@@ -67,6 +75,17 @@ public abstract class UIElement {
     }
 
     public void setCanvas(Canvas canvas) {
+        for(UIElement child : children){
+            child.setCanvas(canvas);
+        }
         this.canvas = canvas;
+    }
+
+    public void addChild(UIElement element) {
+        children.add(element);
+    }
+
+    public void removeChild(UIElement element) {
+        children.remove(element);
     }
 }

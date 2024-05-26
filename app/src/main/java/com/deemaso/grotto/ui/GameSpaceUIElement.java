@@ -17,6 +17,11 @@ public abstract class GameSpaceUIElement extends UIElement{
         this.entity = entity;
     }
 
+    @Override
+    public void draw(float screenX, float screenY) {
+        super.draw(screenX, screenY);
+    }
+
     public Entity getEntity() {
         return entity;
     }
