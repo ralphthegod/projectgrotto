@@ -5,6 +5,7 @@ import android.util.Log;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.Component;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.LevelDefinitionComponent;
@@ -193,5 +194,10 @@ public class LevelSystem extends System{
             setTilesPosition(entry.getValue(), x, y);
         }
         isGenerating = false;
+    }
+
+    @Override
+    public void onEvent(SystemEvent event) {
+
     }
 }
