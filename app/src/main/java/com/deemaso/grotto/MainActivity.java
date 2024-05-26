@@ -50,6 +50,7 @@ import com.deemaso.grotto.systems.LevelSystem;
 import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
 import com.deemaso.grotto.ui.UIManager;
+import com.deemaso.grotto.ui.elements.ExperienceCounterUIElement;
 import com.deemaso.grotto.ui.elements.TextUIElement;
 import com.example.mfaella.physicsapp.R;
 
@@ -112,12 +113,19 @@ public class MainActivity extends Activity {
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
         LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
-        collisionSystem.registerListener(CollisionEvent.class, levelProgressionSystem);
 
-        // Register the UI manager as a listener for the CurrentViewEvent
-        // This event is emitted by the render system when the camera moves
-        // so that the UI manager can update the position of the UI elements
-        renderSystem.registerListener(CurrentViewEvent.class, uiManager);
+        ExperienceCounterUIElement experienceCounterUIElement = new ExperienceCounterUIElement(
+                 10,
+                30,
+                25f,
+                30f,
+                resourceLoader.loadBitmapAsset("sprites/coin_icon.png"),
+                32,
+                resourceLoader.loadFont("fonts/mini4.ttf")
+        );
+
+        gw.getUIManager().addUIElement(experienceCounterUIElement);
+
 
         // Order matters (input, physics, render...)
         gw.addSystem(inputSystem);
@@ -135,12 +143,12 @@ public class MainActivity extends Activity {
 
 
         // Entities
-        Entity backgroundMusicEntity = new Entity("0");
+        //Entity backgroundMusicEntity = new Entity("0");
         //backgroundMusicEntity.addComponent(new MusicComponent(backgroundMusic));
-        gw.addEntity(backgroundMusicEntity);
+        //gw.addEntity(backgroundMusicEntity);
 
-        Entity testingEntity = new Entity("1");
-        GrottoRenderComponent grottoRenderComponent = new GrottoRenderComponent();
+        //Entity testingEntity = new Entity("1");
+        //GrottoRenderComponent grottoRenderComponent = new GrottoRenderComponent();
 
         /*grottoRenderComponent.setAnimationFrameDuration(0.1f);
         grottoRenderComponent.setHeight(2.5f);
