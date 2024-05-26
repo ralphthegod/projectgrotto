@@ -16,7 +16,6 @@ public class LevelGenerationElementDefinition{
     private int globalMaxQuantity;
     private boolean canBeInRoom;
     private boolean canBeInCorridor;
-
     private int minDistanceBetweenElements;
     private DistributionType distribution;
     // Map key is probability of this tile being chosen

@@ -225,8 +225,8 @@
             globalMaxQuantity="70"
             canBeInRoom="true"
             canBeInCorridor="true"
-            minDistanceBetweenElements="1"
-            distribution="0">
+            minDistanceBetweenElements="2"
+            distribution="1">
             <TileArchetypes>
                 <TileArchetype
                     probability="1"
