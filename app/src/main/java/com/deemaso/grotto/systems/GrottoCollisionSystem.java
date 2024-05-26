@@ -4,26 +4,22 @@ import android.util.Log;
 
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.collisions.Collision;
-import com.deemaso.core.events.Event;
-import com.deemaso.core.events.EventEmitter;
-import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.CollisionSystem;
 import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.events.CollisionEvent;
 import com.deemaso.grotto.listeners.CollisionListener;
 
 import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.dynamics.contacts.Contact;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class GrottoCollisionSystem extends CollisionSystem implements EventEmitter {
+public class GrottoCollisionSystem extends CollisionSystem {
 
     private final ContactListener contactListener;
-    private final Map<Class<? extends Event>, List<EventListener>> listeners = new java.util.HashMap<>();
 
     public GrottoCollisionSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(PhysicsComponent.class));
@@ -43,7 +39,9 @@ public class GrottoCollisionSystem extends CollisionSystem implements EventEmitt
     @Override
     protected void handleCollision(Collision collision) {
         Log.d("CollisionSystem", "Collision detected");
-        emitEvent(new CollisionEvent(collision));
+        SystemEvent event = new SystemEvent("COLLISION");
+        event.put("collision", collision);
+        gameWorld.broadcastEvent(event);
 
     }
 
@@ -67,17 +65,7 @@ public class GrottoCollisionSystem extends CollisionSystem implements EventEmitt
     }
 
     @Override
-    public Map<Class<? extends Event>, List<EventListener>> getListeners() {
-        return listeners;
-    }
+    public void onEvent(SystemEvent event) {
 
-    @Override
-    public <T extends Event> void emitEvent(T event) {
-        EventEmitter.super.emitEvent(event);
-    }
-
-    @Override
-    public <T extends Event> void registerListener(Class<T> eventType, EventListener<T> listener) {
-        EventEmitter.super.registerListener(eventType, listener);
     }
 }

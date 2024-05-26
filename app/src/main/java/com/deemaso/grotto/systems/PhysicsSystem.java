@@ -1,13 +1,9 @@
 package com.deemaso.grotto.systems;
 
-import android.util.Log;
-
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.RenderComponent;
-import com.deemaso.core.events.Event;
-import com.deemaso.core.events.EventEmitter;
-import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
@@ -28,11 +24,10 @@ import java.util.Map;
 
 /**
     * PhysicsSystem is a system that handles the physics of the game.
-    * It uses the (J)LiquidFun physics engine to simulate physics.
+    * It uses the (J)Box2D physics engine to simulate physics.
  */
-public class PhysicsSystem extends System implements EventEmitter {
+public class PhysicsSystem extends System{
 
-    final private static Map<Class<? extends Event>, List<EventListener>> listeners = new HashMap<>();
 
     World physicsWorld;
 
@@ -70,7 +65,9 @@ public class PhysicsSystem extends System implements EventEmitter {
         physicsWorld.step(dt, velocityIterations, positionIterations);
 
         // Emit a PhysicsWorldEvent for other systems to listen to
-        emitEvent(new PhysicsWorldEvent(physicsWorld));
+        SystemEvent event = new SystemEvent("PHYSICS_WORLD");
+        event.put("physicsWorld", physicsWorld);
+        gameWorld.broadcastEvent(event);
     }
 
     /**
@@ -94,10 +91,8 @@ public class PhysicsSystem extends System implements EventEmitter {
 
             RenderComponent render = entity.getComponent(GrottoRenderComponent.class);
             if(render != null) {
-                Log.d("PhysicsSystem", "Registering entity with render component");
                 box.setAsBox(physics.getShapeWidth(), physics.getShapeHeight());
             } else {
-                Log.d("PhysicsSystem", "Registering entity without render component");
                 box.setAsBox(1, 1);
             }
             FixtureDef fixtureDef = new FixtureDef();
@@ -109,6 +104,13 @@ public class PhysicsSystem extends System implements EventEmitter {
             body.createFixture(fixtureDef);
         }
         return hasBeenAdded;
+    }
+
+    @Override
+    public void unregisterEntity(Entity entity) {
+        super.unregisterEntity(entity);
+        PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+        physicsWorld.destroyBody(physics.getBody());
     }
 
     public void updateGravity(float x, float y) {
@@ -133,11 +135,7 @@ public class PhysicsSystem extends System implements EventEmitter {
     }
 
     @Override
-    public Map<Class<? extends Event>, List<EventListener>> getListeners() {
-        return listeners;
+    public void onEvent(SystemEvent event) {
+
     }
-
-
-
-
 }

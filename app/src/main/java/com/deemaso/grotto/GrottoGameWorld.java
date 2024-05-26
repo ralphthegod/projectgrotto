@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.EntityManager;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.ui.UIManager;
 
@@ -33,6 +34,14 @@ public class GrottoGameWorld extends GameWorld{
         super.update(dt);
         if(uiManager != null) {
             uiManager.draw();
+        }
+    }
+
+    @Override
+    public void broadcastEvent(SystemEvent event) {
+        super.broadcastEvent(event);
+        if(uiManager != null) {
+            uiManager.onEvent(event);
         }
     }
 

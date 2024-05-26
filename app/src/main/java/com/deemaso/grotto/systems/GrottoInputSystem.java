@@ -7,6 +7,7 @@ import com.badlogic.androidgames.framework.impl.TouchHandler;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.InputComponent;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.input.InputEvent;
 import com.deemaso.core.systems.InputSystem;
 import com.deemaso.grotto.input.GrottoInputEvent;
@@ -46,9 +47,13 @@ public class GrottoInputSystem extends InputSystem {
         switch (((GrottoInputEvent) inputEvent).getType()){
             case TOUCH_DOWN:
                 Log.d("GrottoInputSystem", "Touch Down");
+                SystemEvent event = new SystemEvent("INPUT_TOUCH_DOWN");
+                gameWorld.broadcastEvent(event);
                 break;
             case TOUCH_UP:
                 Log.d("GrottoInputSystem", "Touch Up");
+                SystemEvent event2 = new SystemEvent("INPUT_TOUCH_UP");
+                gameWorld.broadcastEvent(event2);
                 break;
             default:
                 break;
@@ -68,5 +73,10 @@ public class GrottoInputSystem extends InputSystem {
     @Override
     public void resume() {
 
+    }
+
+    @Override
+    public void onEvent(SystemEvent event) {
+        // Handle events
     }
 }

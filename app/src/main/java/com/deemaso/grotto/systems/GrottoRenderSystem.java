@@ -4,9 +4,7 @@ import com.deemaso.core.Box;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.RenderComponent;
-import com.deemaso.core.events.Event;
-import com.deemaso.core.events.EventEmitter;
-import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.RenderSystem;
 import com.deemaso.grotto.GrottoGameWorld;
 import com.deemaso.grotto.components.CameraComponent;
@@ -35,7 +33,7 @@ import java.util.Map;
     * It uses Canvas and Bitmap from Android SDK to draw entities.
     * It also uses the PhysicsComponent to determine the position of entities.
  */
-public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
+public class GrottoRenderSystem extends RenderSystem {
 
     private final Canvas canvas;
     private final Bitmap buffer;
@@ -141,7 +139,9 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
             }
 
             // Emit the current view event, so that other systems can use it if needed
-            emitEvent(new CurrentViewEvent(currentView));
+            SystemEvent event = new SystemEvent("CURRENT_VIEW");
+            event.put("currentView", currentView);
+            gameWorld.broadcastEvent(event);
 
             if(x > currentView.xmin && x < currentView.xmax &&
                     y > currentView.ymin && y < currentView.ymax) {
@@ -185,20 +185,8 @@ public class GrottoRenderSystem extends RenderSystem implements EventEmitter {
         return buffer;
     }
 
-    final private static Map<Class<? extends Event>, List<EventListener>> listeners = new HashMap<>();
-
     @Override
-    public Map<Class<? extends Event>, List<EventListener>> getListeners() {
-        return listeners;
-    }
+    public void onEvent(SystemEvent event) {
 
-    @Override
-    public <T extends Event> void emitEvent(T event) {
-        EventEmitter.super.emitEvent(event);
-    }
-
-    @Override
-    public <T extends Event> void registerListener(Class<T> eventType, EventListener<T> listener) {
-        EventEmitter.super.registerListener(eventType, listener);
     }
 }

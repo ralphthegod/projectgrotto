@@ -1,13 +1,11 @@
 package com.deemaso.grotto.systems;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Audio;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Sound;
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
-import com.deemaso.core.events.EventListener;
+import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.MusicComponent;
 import com.deemaso.grotto.components.SoundComponent;
@@ -17,7 +15,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class SoundSystem extends System implements EventListener<SoundEvent> {
+public class SoundSystem extends System{
 
     private long timeOfLastSound = 0;
     private Music backgroundMusic;
@@ -78,7 +76,10 @@ public class SoundSystem extends System implements EventListener<SoundEvent> {
     }
 
     @Override
-    public void onEventReceived(SoundEvent event) {
-        soundQueue.add(event.getSound());
+    public void onEvent(SystemEvent event) {
+        if(event.getCode().equals("SOUND")){
+            Sound sound = (Sound) event.get("sound");
+            soundQueue.add(sound);
+        }
     }
 }
