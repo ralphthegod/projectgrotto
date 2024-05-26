@@ -8,16 +8,13 @@ import com.deemaso.core.EntityManager;
 import com.deemaso.core.components.Component;
 import com.deemaso.core.components.InputComponent;
 import com.deemaso.core.components.TransformComponent;
-import com.deemaso.grotto.components.CharLevelComponent;
+import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LevelDefinitionComponent;
 import com.deemaso.grotto.components.LootComponent;
 import com.deemaso.grotto.components.NavigationComponent;
 import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.components.TileComponent;
 import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
-import com.deemaso.grotto.ui.UIElement;
-import com.deemaso.grotto.ui.UIFactory;
-import com.deemaso.grotto.ui.UIManager;
 import com.deemaso.grotto.utils.Helpers;
 import com.deemaso.grotto.components.CameraComponent;
 import com.deemaso.grotto.components.GrottoRenderComponent;
@@ -205,14 +202,15 @@ public class GrottoEntityManager extends EntityManager {
             "LootComponent",
             (element) -> {
                 int value = Helpers.getAttributeAsInt(element, "lootValue", 0);
-                return new LootComponent(value);
+                boolean removeAfterCollecting = Helpers.getAttributeAsBoolean(element, "removeAfterCollecting", true);
+                return new LootComponent(value, removeAfterCollecting);
             }
         );
 
         componentFactory.registerComponent(
             "CharLevelComponent",
             (element) -> {
-              return new CharLevelComponent();
+              return new CharacterStatsComponent();
             }
         );
 
