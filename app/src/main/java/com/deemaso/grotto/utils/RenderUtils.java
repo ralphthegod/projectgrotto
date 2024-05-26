@@ -5,6 +5,10 @@ import android.graphics.Matrix;
 
 public class RenderUtils {
 
+    static public Bitmap getResizedBitmap(Bitmap bitmap, int newWidth, int newHeight) {
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
+    }
+
     static public float toMetersX(float x, float minX, float width, float screenWidth) {
         return minX + x * (width/screenWidth);
     }
