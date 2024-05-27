@@ -240,6 +240,27 @@
             </TileArchetypes>
         </ElementDefinition>
         <ElementDefinition
+            symbol="1"
+            name="minion"
+            globalMinQuantity="5"
+            globalMaxQuantity="10"
+            canBeInRoom="true"
+            canBeInCorridor="false"
+            minDistanceBetweenElements="0"
+            distribution="1">
+            <TileArchetypes>
+                <TileArchetype
+                    probability="1"
+                    archetypeId="goblin"
+                    baseArchetypeId="floor_1"
+                    topArchetypeId="-1"
+                    rightArchetypeId="-1"
+                    bottomArchetypeId="-1"
+                    leftArchetypeId="-1"
+                />
+            </TileArchetypes>
+        </ElementDefinition>
+        <ElementDefinition
             symbol="^"
             name="spike"
             globalMinQuantity="50"
