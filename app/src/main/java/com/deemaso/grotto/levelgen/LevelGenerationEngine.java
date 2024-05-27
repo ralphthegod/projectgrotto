@@ -554,10 +554,6 @@ public class LevelGenerationEngine {
 
         Log.d("LevelGenerationEngine", "Borders added");
 
-        fillRoomHoles();
-
-        Log.d("LevelGenerationEngine", "Holes filled");
-
         try {
             if (elementDefinitions != null) {
                 for (LevelGenerationElementDefinition elementDef : elementDefinitions) {
@@ -570,6 +566,10 @@ public class LevelGenerationEngine {
         }
 
         Log.d("LevelGenerationEngine", "Elements placed");
+
+        fillRoomHoles();
+
+        Log.d("LevelGenerationEngine", "Holes filled");
 
         placeStartingPoint();
         placeEndingPoint();
