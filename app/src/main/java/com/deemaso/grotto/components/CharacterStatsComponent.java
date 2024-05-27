@@ -7,8 +7,8 @@ public class CharacterStatsComponent extends Component {
     private int experience = 0;
     private boolean isAlive = true;
 
-    public CharacterStatsComponent(int level) {
-        this.level = level;
+    public CharacterStatsComponent(int experience) {
+        this.experience = experience;
     }
 
     public CharacterStatsComponent() {
