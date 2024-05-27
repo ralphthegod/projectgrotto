@@ -14,6 +14,7 @@ public class PhysicsComponent extends Component {
     private boolean isSensor;
     private float shapeHeight = 0;
     private float shapeWidth = 0;
+    private float gravityScale = 1;
 
 
     public Body getBody() {
@@ -86,5 +87,13 @@ public class PhysicsComponent extends Component {
 
     public void setSensor(boolean sensor) {
         isSensor = sensor;
+    }
+
+    public float getGravityScale() {
+        return gravityScale;
+    }
+
+    public void setGravityScale(float gravityScale) {
+        this.gravityScale = gravityScale;
     }
 }

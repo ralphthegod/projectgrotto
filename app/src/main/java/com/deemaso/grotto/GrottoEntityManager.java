@@ -83,6 +83,7 @@ public class GrottoEntityManager extends EntityManager {
                     float x = Helpers.getAttributeAsFloat(element, "x", 0.0f);
                     float y = Helpers.getAttributeAsFloat(element, "y", 0.0f);
                     boolean isSensor = Helpers.getAttributeAsBoolean(element, "isSensor", false);
+                    float gravityScale = Helpers.getAttributeAsFloat(element, "gravityScale", 1.0f);
                     BodyType bodyType = BodyType.values()[Helpers.getAttributeAsInt(element, "bodyType", 0)];
                     PhysicsComponent physics = new PhysicsComponent();
                     physics.setDensity(density);
@@ -93,6 +94,7 @@ public class GrottoEntityManager extends EntityManager {
                     physics.setY(y);
                     physics.setBodyType(bodyType);
                     physics.setSensor(isSensor);
+                    physics.setGravityScale(gravityScale);
                     return physics;
                 }
         );
@@ -208,9 +210,10 @@ public class GrottoEntityManager extends EntityManager {
         );
 
         componentFactory.registerComponent(
-            "CharLevelComponent",
+            "CharacterStatsComponent",
             (element) -> {
-              return new CharacterStatsComponent();
+                int experience = Helpers.getAttributeAsInt(element, "experience", 0);
+                return new CharacterStatsComponent(experience);
             }
         );
 
