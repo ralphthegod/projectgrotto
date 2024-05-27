@@ -57,7 +57,6 @@ public class UIManager implements EventListener {
 
     public void draw(UIElement element){
         if (element.isVisible()) {
-            Canvas canvas = element.getCanvas();
             if(element instanceof GameSpaceUIElement) {
                 drawGameSpaceUIElement((GameSpaceUIElement) element);
             }
@@ -148,7 +147,7 @@ public class UIManager implements EventListener {
             float x = Helpers.getAttributeAsFloat(element, "x", 0);
             float y = Helpers.getAttributeAsFloat(element, "y", 0);
             float textSize = Helpers.getAttributeAsFloat(element, "textSize", 20);
-            int color = Color.parseColor(Helpers.getAttributeAsString(element, "color", "0xFFFFFFFF"));
+            int color = Color.parseColor(Helpers.getAttributeAsString(element, "color", "white"));
             Typeface typeface = resourceLoader.loadFont(Helpers.getAttributeAsString(element, "typeface", "default"));
             return new LevelLabelUIElement(x, y, 0, 0, entity, "Lvl " + entity.getComponent(CharacterStatsComponent.class).getLevel(), textSize, typeface, color);
         });
