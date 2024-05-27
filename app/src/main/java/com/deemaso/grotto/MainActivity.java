@@ -3,9 +3,7 @@ package com.deemaso.grotto;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Camera;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -15,33 +13,15 @@ import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.badlogic.androidgames.framework.Sound;
 import com.deemaso.core.Box;
-import com.deemaso.core.Entity;
-import com.deemaso.core.GameWorld;
 
 import com.badlogic.androidgames.framework.Audio;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.impl.AndroidAudio;
 import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
-import com.deemaso.core.EntityManager;
-import com.deemaso.core.collisions.Collision;
-import com.deemaso.core.components.RenderComponent;
-import com.deemaso.core.systems.CollisionSystem;
 import com.deemaso.core.systems.InputSystem;
-import com.deemaso.core.systems.RenderSystem;
-import com.deemaso.grotto.components.CameraComponent;
-import com.deemaso.grotto.components.GrottoRenderComponent;
-import com.deemaso.grotto.components.MusicComponent;
-import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.data.ResourceLoader;
-import com.deemaso.grotto.events.CollisionEvent;
-import com.deemaso.grotto.events.CurrentViewEvent;
-import com.deemaso.grotto.levelgen.DistributionType;
-import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
-import com.deemaso.grotto.levelgen.LevelGenerationEngine;
 import com.deemaso.grotto.listeners.AccelerometerListener;
-import com.deemaso.grotto.listeners.CollisionListener;
+import com.deemaso.grotto.systems.CombatSystem;
 import com.deemaso.grotto.systems.GrottoCollisionSystem;
 import com.deemaso.grotto.systems.GrottoInputSystem;
 import com.deemaso.grotto.systems.GrottoRenderSystem;
@@ -51,6 +31,7 @@ import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
 import com.deemaso.grotto.ui.UIManager;
 import com.deemaso.grotto.ui.elements.ExperienceCounterUIElement;
+import com.deemaso.grotto.ui.elements.PlayerDeathTextUIElement;
 import com.deemaso.grotto.ui.elements.TextUIElement;
 import com.example.mfaella.physicsapp.R;
 
@@ -81,7 +62,7 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Sound
-        Audio audio = new AndroidAudio(this);
+
         //CollisionSounds.init(audio);
         //Music backgroundMusic = audio.newMusic("soundtrack.mp3");
         //backgroundMusic.play();
@@ -103,6 +84,8 @@ public class MainActivity extends Activity {
         gw.setUIManager(uiManager);
 
         GrottoRenderSystem renderSystem = new GrottoRenderSystem(gw, physicalSize, screenSize, renderView.getFrameBuffer());
+
+        Audio audio = new AndroidAudio(this);
         SoundSystem soundSystem = new SoundSystem(gw, audio);
 
         World physicsWorld = new World(new Vec2(0,0));
@@ -112,6 +95,7 @@ public class MainActivity extends Activity {
 
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
+        CombatSystem combatSystem = new CombatSystem(gw);
         LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
 
         ExperienceCounterUIElement experienceCounterUIElement = new ExperienceCounterUIElement(
@@ -124,8 +108,19 @@ public class MainActivity extends Activity {
                 resourceLoader.loadFont("fonts/mini4.ttf")
         );
 
-        gw.getUIManager().addUIElement(experienceCounterUIElement);
+        PlayerDeathTextUIElement playerDeathTextUIElement = new PlayerDeathTextUIElement(
+                200,
+                600,
+                0,
+                0,
+                "You died!",
+                72,
+                resourceLoader.loadFont("fonts/mini4.ttf"),
+                Color.RED
+        );
 
+        gw.getUIManager().addUIElement(experienceCounterUIElement);
+        gw.getUIManager().addUIElement(playerDeathTextUIElement);
 
         // Order matters (input, physics, render...)
         gw.addSystem(inputSystem);
@@ -133,6 +128,7 @@ public class MainActivity extends Activity {
         gw.addSystem(collisionSystem);
         //game logic systems
         gw.addSystem(levelSystem);
+        gw.addSystem(combatSystem);
         gw.addSystem(levelProgressionSystem);
         gw.addSystem(soundSystem);
         //rendering
