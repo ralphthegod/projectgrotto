@@ -10,7 +10,6 @@ import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LootComponent;
 import com.deemaso.grotto.components.PlayerComponent;
-import com.deemaso.grotto.events.CollisionEvent;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -25,28 +24,38 @@ public class LevelProgressionSystem extends System{
 
     @Override
     public void onEvent(SystemEvent event) {
-        if(event.getCode().equals("COLLISION")){
-            Log.d("LevelProgressionSystem", "Collision event received.");
-            Collision collision = (Collision) event.get("collision");
-            Entity entity1 = collision.getA();
-            Entity entity2 = collision.getB();
-            if(
-                entity1.hasComponent(PlayerComponent.class) &&
-                        entity2.hasComponent(LootComponent.class)
-                ||
-                entity2.hasComponent(PlayerComponent.class) &&
-                        entity1.hasComponent(LootComponent.class)
-            ){
-                Entity lootEntity = entity1.hasComponent(LootComponent.class) ?
-                        entity1 : entity2;
-                Entity playerEntity = entity1.hasComponent(PlayerComponent.class) ?
-                        entity1 : entity2;
-                Progression prog = new Progression(playerEntity, lootEntity.getComponent(LootComponent.class).getValue());
-                if(lootEntity.getComponent(LootComponent.class).isRemoveAfterCollecting()){
-                    gameWorld.markEntityForDeletion(lootEntity);
+        switch(event.getCode()){
+
+            case "COLLISION":
+                Collision collision = (Collision) event.get("collision");
+                Entity entity1 = collision.getA();
+                Entity entity2 = collision.getB();
+                if(
+                        entity1.hasComponent(PlayerComponent.class) &&
+                                entity2.hasComponent(LootComponent.class)
+                            ||
+                        entity2.hasComponent(PlayerComponent.class) &&
+                                entity1.hasComponent(LootComponent.class)
+                ){
+                    Entity lootEntity = entity1.hasComponent(LootComponent.class) ?
+                            entity1 : entity2;
+                    Entity playerEntity = entity1.hasComponent(PlayerComponent.class) ?
+                            entity1 : entity2;
+                    Progression prog = new Progression(playerEntity, lootEntity.getComponent(LootComponent.class).getValue());
+                    if(lootEntity.getComponent(LootComponent.class).isRemoveAfterCollecting()){
+                        gameWorld.markEntityForDeletion(lootEntity);
+                    }
+                    progressions.add(prog);
                 }
+                break;
+
+            case "COMBAT":
+                Entity winner = (Entity) event.get("winner");
+                Entity loser = (Entity) event.get("loser");
+                Progression prog = new Progression(winner, loser.getComponent(CharacterStatsComponent.class).getExperience());
                 progressions.add(prog);
-            }
+                loser.getComponent(CharacterStatsComponent.class).setAlive(false);
+                break;
         }
     }
 
@@ -71,6 +80,7 @@ public class LevelProgressionSystem extends System{
 
     @Override
     public void update(float dt) {
+        super.update(dt);
         processProgressions();
         processDeaths();
     }
