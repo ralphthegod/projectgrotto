@@ -48,6 +48,7 @@ public abstract class RenderSystem extends System {
         for(Entity e : entities) {
             draw(e, deltaTime);
         }
+        super.update(deltaTime);
     }
 
     protected abstract void sortEntitiesByZIndex();

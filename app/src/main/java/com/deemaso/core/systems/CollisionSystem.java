@@ -19,6 +19,7 @@ public abstract class CollisionSystem extends System{
 
     @Override
     public void update(float dt) {
+        super.update(dt);
         Collection<Collision> collisions = getCollisions();
         for(Collision collision : collisions) {
             handleCollision(collision);

@@ -29,6 +29,7 @@ public class SoundSystem extends System{
 
     @Override
     public void update(float dt) {
+        super.update(dt);
         if(backgroundMusic == null){
             for (Entity entity : entities) {
                 if(entity.hasComponent(MusicComponent.class)){

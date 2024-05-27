@@ -57,6 +57,8 @@ public class PhysicsSystem extends System{
     @Override
     public void update(float dt) {
 
+        super.update(dt);
+
         if(isGravityChanged) {
             physicsWorld.setGravity(new Vec2(gravityX, gravityY));
             isGravityChanged = false;
@@ -83,6 +85,7 @@ public class PhysicsSystem extends System{
             BodyDef bodyDef = new BodyDef();
             bodyDef.position.set(physics.getX(), physics.getY());
             bodyDef.type = physics.getBodyType() == BodyType.STATIC ? BodyType.STATIC : BodyType.DYNAMIC;
+            bodyDef.gravityScale = physics.getGravityScale();
             physics.setBody(physicsWorld.createBody(bodyDef));
             Body body = physics.getBody();
             body.setSleepingAllowed(false);

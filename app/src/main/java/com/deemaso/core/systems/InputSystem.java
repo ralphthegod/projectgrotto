@@ -26,6 +26,7 @@ public abstract class InputSystem extends System{
 
     @Override
     public void update(float dt) {
+        super.update(dt);
         getInputEvents();
         for(Entity e : entities) {
             InputEvent inputEvent = inputEvents.poll();
