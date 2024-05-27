@@ -7,15 +7,12 @@ import com.deemaso.core.collisions.Collision;
 import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.CollisionSystem;
 import com.deemaso.grotto.components.PhysicsComponent;
-import com.deemaso.grotto.events.CollisionEvent;
 import com.deemaso.grotto.listeners.CollisionListener;
 
 import org.jbox2d.callbacks.ContactListener;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public class GrottoCollisionSystem extends CollisionSystem {
 

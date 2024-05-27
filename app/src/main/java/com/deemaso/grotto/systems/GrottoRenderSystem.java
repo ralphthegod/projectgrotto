@@ -11,7 +11,6 @@ import com.deemaso.grotto.components.CameraComponent;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
 import com.deemaso.grotto.data.ResourceLoader;
-import com.deemaso.grotto.events.CurrentViewEvent;
 import com.deemaso.grotto.utils.RenderUtils;
 
 import android.graphics.Bitmap;
@@ -24,9 +23,6 @@ import org.jbox2d.dynamics.Body;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*
     * Manages rendering of entities in the Grotto game.

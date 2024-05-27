@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 
+import com.deemaso.grotto.utils.RenderUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

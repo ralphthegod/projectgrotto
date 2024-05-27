@@ -9,7 +9,6 @@ import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.MusicComponent;
 import com.deemaso.grotto.components.SoundComponent;
-import com.deemaso.grotto.events.SoundEvent;
 
 import java.util.Arrays;
 import java.util.LinkedList;

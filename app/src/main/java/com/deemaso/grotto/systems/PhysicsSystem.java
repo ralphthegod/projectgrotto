@@ -7,7 +7,6 @@ import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
-import com.deemaso.grotto.events.PhysicsWorldEvent;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -18,9 +17,6 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
     * PhysicsSystem is a system that handles the physics of the game.
