@@ -1,6 +1,7 @@
 package com.deemaso.grotto.ui;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.deemaso.core.Box;
 
