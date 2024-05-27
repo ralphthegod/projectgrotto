@@ -1,6 +1,7 @@
 package com.deemaso.grotto.ui.elements;
 
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.deemaso.core.Entity;
 import com.deemaso.core.events.EventListener;
@@ -19,7 +20,7 @@ public class LevelLabelUIElement extends GameSpaceTextUIElement implements Event
 
     @Override
     public void onEvent(SystemEvent event) {
-        if(event.getCode().equals("LEVEL_UP") || event.getCode().equals("LEVEL_DOWN") || event.getCode().equals("LEVEL_SET")
+        if((event.getCode().equals("LEVEL_UP") || event.getCode().equals("LEVEL_DOWN") || event.getCode().equals("LEVEL_SET"))
                 && event.get("entity").equals(getEntity()))
         {
             setText("Lvl " + event.get("level"));
