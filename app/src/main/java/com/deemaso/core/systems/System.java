@@ -15,6 +15,7 @@ public abstract class System implements EventListener {
 
     final protected GameWorld gameWorld;
     final protected List<Entity> entities = new ArrayList<>();
+    final protected List<Entity> entitiesToDelete = new ArrayList<>();
     final protected List<Class<? extends Component>> requiredComponents = new ArrayList<>();
     final protected boolean requireAllComponents;
 
@@ -46,7 +47,7 @@ public abstract class System implements EventListener {
     }
 
     public void unregisterEntity(Entity entity) {
-        entities.remove(entity);
+        entitiesToDelete.add(entity);
     }
 
     public void unregisterEntities(List<Entity> entities) {
@@ -55,7 +56,16 @@ public abstract class System implements EventListener {
         }
     }
 
-    public abstract void update(float dt);
+    public void deleteEntities() {
+        for (Entity entity : entitiesToDelete) {
+            entities.remove(entity);
+        }
+        entitiesToDelete.clear();
+    }
+
+    public void update(float dt){
+        deleteEntities();
+    }
     protected abstract void finalize();
     public abstract void pause();
     public abstract void resume();
