@@ -6,8 +6,9 @@ public class CharacterStatsComponent extends Component {
     private int level = 1;
     private int experience = 0;
     private boolean isAlive = true;
+    private String faction;
 
-    public CharacterStatsComponent(int experience) {
+    public CharacterStatsComponent(int experience, String faction) {
         this.experience = experience;
     }
 
@@ -40,5 +41,13 @@ public class CharacterStatsComponent extends Component {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+    }
+
+    public String getFaction() {
+        return faction;
+    }
+
+    public void setFaction(String faction) {
+        this.faction = faction;
     }
 }
