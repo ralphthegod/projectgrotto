@@ -11,7 +11,9 @@ import com.deemaso.core.components.TransformComponent;
 import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LevelDefinitionComponent;
 import com.deemaso.grotto.components.LootComponent;
+import com.deemaso.grotto.components.MovementComponent;
 import com.deemaso.grotto.components.NavigationComponent;
+import com.deemaso.grotto.components.PerceptionComponent;
 import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.components.TileComponent;
 import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
@@ -213,7 +215,8 @@ public class GrottoEntityManager extends EntityManager {
             "CharacterStatsComponent",
             (element) -> {
                 int experience = Helpers.getAttributeAsInt(element, "experience", 0);
-                return new CharacterStatsComponent(experience);
+                String faction = Helpers.getAttributeAsString(element, "faction", "");
+                return new CharacterStatsComponent(experience, faction);
             }
         );
 
@@ -221,6 +224,23 @@ public class GrottoEntityManager extends EntityManager {
             "PlayerComponent",
             (element) -> {
                 return new PlayerComponent();
+            }
+        );
+
+        componentFactory.registerComponent(
+            "MovementComponent",
+            (element) -> {
+                float speed = Helpers.getAttributeAsFloat(element, "speed", 1.0f);
+                float power = Helpers.getAttributeAsFloat(element, "power", 1.0f);
+                return new MovementComponent(power, speed);
+            }
+        );
+
+        componentFactory.registerComponent(
+            "PerceptionComponent",
+            (element) -> {
+                float perceptionRadius = Helpers.getAttributeAsFloat(element, "perceptionRadius", 1.0f);
+                return new PerceptionComponent(perceptionRadius);
             }
         );
 
