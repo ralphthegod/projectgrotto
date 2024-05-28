@@ -27,6 +27,8 @@ import com.deemaso.grotto.systems.GrottoInputSystem;
 import com.deemaso.grotto.systems.GrottoRenderSystem;
 import com.deemaso.grotto.systems.LevelProgressionSystem;
 import com.deemaso.grotto.systems.LevelSystem;
+import com.deemaso.grotto.systems.MovementSystem;
+import com.deemaso.grotto.systems.PerceptionSystem;
 import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
 import com.deemaso.grotto.ui.UIManager;
@@ -90,9 +92,11 @@ public class MainActivity extends Activity {
 
         World physicsWorld = new World(new Vec2(0,0));
         PhysicsSystem physicsSystem = new PhysicsSystem(gw, physicsWorld, 8,3,3);
+        PerceptionSystem perceptionSystem = new PerceptionSystem(gw, physicsWorld);
         GrottoCollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
         physicsWorld.setContactListener(collisionSystem.getContactListener());
 
+        MovementSystem movementSystem = new MovementSystem(gw);
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
         CombatSystem combatSystem = new CombatSystem(gw);
@@ -127,52 +131,14 @@ public class MainActivity extends Activity {
         gw.addSystem(physicsSystem);
         gw.addSystem(collisionSystem);
         //game logic systems
+        gw.addSystem(perceptionSystem);
         gw.addSystem(levelSystem);
         gw.addSystem(combatSystem);
+        gw.addSystem(movementSystem);
         gw.addSystem(levelProgressionSystem);
         gw.addSystem(soundSystem);
         //rendering
         gw.addSystem(renderSystem);
-
-
-        // Set the UI manager
-
-
-        // Entities
-        //Entity backgroundMusicEntity = new Entity("0");
-        //backgroundMusicEntity.addComponent(new MusicComponent(backgroundMusic));
-        //gw.addEntity(backgroundMusicEntity);
-
-        //Entity testingEntity = new Entity("1");
-        //GrottoRenderComponent grottoRenderComponent = new GrottoRenderComponent();
-
-        /*grottoRenderComponent.setAnimationFrameDuration(0.1f);
-        grottoRenderComponent.setHeight(2.5f);
-        grottoRenderComponent.setWidth(2.5f);
-        testingEntity.addComponent(grottoRenderComponent);
-        testingEntity.addComponent(new PhysicsComponent());
-        testingEntity.getComponent(PhysicsComponent.class).setX(5);
-        testingEntity.getComponent(PhysicsComponent.class).setY(-5);
-        testingEntity.getComponent(PhysicsComponent.class).setDensity(0.5f);
-        testingEntity.getComponent(PhysicsComponent.class).setFriction(0.9f);
-        testingEntity.getComponent(PhysicsComponent.class).setBodyType(BodyType.dynamicBody);
-        testingEntity.getComponent(PhysicsComponent.class).setShapeHeight(2.5f/2);
-        testingEntity.getComponent(PhysicsComponent.class).setShapeWidth(2.5f/2);
-        testingEntity.addComponent(new CameraComponent(1));
-        gw.getUIManager().addUIElement(new GameSpaceTextUIElement(
-                -1,
-                -1,
-                0,
-                0,
-                testingEntity,
-                "Lvl 1",
-                32,
-                gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
-                Color.WHITE
-        ));
-        gw.addEntity(testingEntity);*/
-
-        //gw.addEntity(gw.createEntityById(1));
 
         gw.getUIManager().addUIElement(new TextUIElement(
                 20,
@@ -185,21 +151,6 @@ public class MainActivity extends Activity {
                 Color.WHITE
         ));
 
-        /*List<LevelGenerationElementDefinition> elementDefinitions = Arrays.asList(
-                new LevelGenerationElementDefinition('M', "monster", 40, 40, true, true, DistributionType.SPARSE),
-                new LevelGenerationElementDefinition('^', "spikes", 100,200,true, false, DistributionType.CLUSTERED),
-                new LevelGenerationElementDefinition('G', "gold", 100, 200, true, true, DistributionType.SPARSE),
-                new LevelGenerationElementDefinition('B', "boss", 1, 1, true, false, DistributionType.SPARSE)
-        );*/
-        //LevelGenerationEngine levelGenerationEngine = new LevelGenerationEngine(100, 100, 4, 13, 20, elementDefinitions);
-        //levelGenerationEngine.generateDungeon();
-        //levelGenerationEngine.printDungeon();
-
-        /* gw.addGameObject(new EnclosureGO(gw, XMIN, XMAX, YMIN, YMAX));
-        gw.addGameObject(new DynamicBoxGO(gw, 0, 0));
-        gw.addGameObject(new DynamicBoxGO(gw, 5, 0));
-        gw.addGameObject(new DynamicTriangleGO(gw, 7, 3));
-        gw.addGameObject(new MarblesGO(gw, 0, 5)); */
 
         //GameObject a = gw.addGameObject(new DynamicBoxGO(gw, 0, -2));
         //GameObject b = gw.addGameObject(new DynamicBoxGO(gw, 1, -3));
