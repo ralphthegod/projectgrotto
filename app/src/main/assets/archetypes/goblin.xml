@@ -17,6 +17,8 @@
         </sprites>
     </Component>
     <Component name="PhysicsComponent" x="5" y="-5" density="0.5" friction="0.9" bodyType="2" shapeHeight="0.4" shapeWidth="0.4" gravityScale="0"/>
-    <Component name="CharacterStatsComponent" experience="7"/>
+    <Component name="CharacterStatsComponent" experience="7" faction="enemy"/>
+    <Component name="MovementComponent" speed="1" power="1"/>
+    <Component name="PerceptionComponent" perceptionRadius="5"/>
     <UI name="LevelLabel" x="-1" y="-0.5" textSize="24" typeface="fonts/mini4.ttf" color="red"/>
 </Entity>
