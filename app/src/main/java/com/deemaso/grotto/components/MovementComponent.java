@@ -22,7 +22,7 @@ public class MovementComponent extends Component {
     static public class Movement {
         public float directionX, directionY;
 
-        public Movement(float directionX, float directionY, float power) {
+        public Movement(float directionX, float directionY) {
             this.directionX = directionX;
             this.directionY = directionY;
         }
@@ -36,8 +36,8 @@ public class MovementComponent extends Component {
         movementQueue = new LinkedList<>();
     }
 
-    public void addMovement(float directionX, float directionY, float power) {
-        movementQueue.add(new Movement(directionX, directionY, power));
+    public void addMovement(float directionX, float directionY) {
+        movementQueue.add(new Movement(directionX, directionY));
     }
 
     public Movement getNextMovement() {
