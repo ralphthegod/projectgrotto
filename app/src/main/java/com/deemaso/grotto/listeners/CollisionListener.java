@@ -37,7 +37,6 @@ public class CollisionListener implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        Log.d("GrottoContactListener", "Begin contact");
         Fixture fa = contact.getFixtureA(),
                 fb = contact.getFixtureB();
         Body ba = fa.getBody(), bb = fb.getBody();
