@@ -56,6 +56,10 @@ public class LevelSystem extends System{
 
     @Override
     public void update(float dt) {
+        checkLevelGeneration();
+    }
+
+    private void checkLevelGeneration(){
         if(!isGenerating && tileMap.isEmpty()) {
             boolean success = false;
             int attempts = 0;
