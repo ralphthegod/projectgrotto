@@ -35,7 +35,6 @@ public class GrottoCollisionSystem extends CollisionSystem {
 
     @Override
     protected void handleCollision(Collision collision) {
-        Log.d("CollisionSystem", "Collision detected");
         SystemEvent event = new SystemEvent("COLLISION");
         event.put("collision", collision);
         gameWorld.broadcastEvent(event);
