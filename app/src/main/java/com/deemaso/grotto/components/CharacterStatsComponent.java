@@ -10,6 +10,7 @@ public class CharacterStatsComponent extends Component {
 
     public CharacterStatsComponent(int experience, String faction) {
         this.experience = experience;
+        this.faction = faction;
     }
 
     public CharacterStatsComponent() {
