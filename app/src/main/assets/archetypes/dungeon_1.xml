@@ -1,6 +1,6 @@
 <Entity id="0">
     <Component name="LevelDefinitionComponent"
-        minRoomSize="4"
+        minRoomSize="6"
         maxRoomSize="13"
         maxRooms="8"
         gridWidth="100"
