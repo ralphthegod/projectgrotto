@@ -1,5 +1,7 @@
 package com.deemaso.grotto.systems;
 
+import android.util.Log;
+
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.events.SystemEvent;
@@ -32,11 +34,12 @@ public class MovementSystem extends System {
                 if (movement.hasMovements() && timeSinceLastMovement >= (1000 / movement.getSpeed())) {
                     MovementComponent.Movement nextMovement = movement.getNextMovement();
                     if (nextMovement != null) {
+                        stopMovement(physics);
                         applyImpulse(physics, nextMovement, movement.getPower());
                         movement.setLastMovementStartTime(currentTime);
                     }
                 } else if (!movement.hasMovements() && timeSinceLastMovement >= (1000 / movement.getSpeed())) {
-                    stopMovement(physics);
+                    //stopMovement(physics);
                     movement.setLastMovementStartTime(currentTime);
                 }
             }
