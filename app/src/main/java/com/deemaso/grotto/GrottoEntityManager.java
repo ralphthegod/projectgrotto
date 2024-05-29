@@ -8,6 +8,9 @@ import com.deemaso.core.EntityManager;
 import com.deemaso.core.components.Component;
 import com.deemaso.core.components.InputComponent;
 import com.deemaso.core.components.TransformComponent;
+import com.deemaso.grotto.ai.DecisionTreeFactory;
+import com.deemaso.grotto.ai.TreeNode;
+import com.deemaso.grotto.components.AIComponent;
 import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LevelDefinitionComponent;
 import com.deemaso.grotto.components.LootComponent;
@@ -87,7 +90,9 @@ public class GrottoEntityManager extends EntityManager {
                     boolean isSensor = Helpers.getAttributeAsBoolean(element, "isSensor", false);
                     float gravityScale = Helpers.getAttributeAsFloat(element, "gravityScale", 1.0f);
                     BodyType bodyType = BodyType.values()[Helpers.getAttributeAsInt(element, "bodyType", 0)];
+                    float linearDamping = Helpers.getAttributeAsFloat(element, "linearDamping", 0.0f);
                     PhysicsComponent physics = new PhysicsComponent();
+                    physics.setLinearDamping(linearDamping);
                     physics.setDensity(density);
                     physics.setFriction(friction);
                     physics.setShapeHeight(shapeHeight);
@@ -241,6 +246,15 @@ public class GrottoEntityManager extends EntityManager {
             (element) -> {
                 float perceptionRadius = Helpers.getAttributeAsFloat(element, "perceptionRadius", 1.0f);
                 return new PerceptionComponent(perceptionRadius);
+            }
+        );
+
+        componentFactory.registerComponent(
+            "AIComponent",
+            (element) -> {
+                String decisionTreeName = Helpers.getAttributeAsString(element, "decisionTree", "");
+                TreeNode decisionTree = DecisionTreeFactory.createDecisionTree(context, decisionTreeName);
+                return new AIComponent(decisionTree);
             }
         );
 
