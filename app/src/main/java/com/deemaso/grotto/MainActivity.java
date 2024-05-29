@@ -21,6 +21,7 @@ import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
 import com.deemaso.core.systems.InputSystem;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.listeners.AccelerometerListener;
+import com.deemaso.grotto.systems.AISystem;
 import com.deemaso.grotto.systems.CombatSystem;
 import com.deemaso.grotto.systems.GrottoCollisionSystem;
 import com.deemaso.grotto.systems.GrottoInputSystem;
@@ -101,6 +102,7 @@ public class MainActivity extends Activity {
         LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
         CombatSystem combatSystem = new CombatSystem(gw);
         LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
+        AISystem aiSystem = new AISystem(gw);
 
         ExperienceCounterUIElement experienceCounterUIElement = new ExperienceCounterUIElement(
                  10,
@@ -132,6 +134,7 @@ public class MainActivity extends Activity {
         gw.addSystem(collisionSystem);
         //game logic systems
         gw.addSystem(perceptionSystem);
+        gw.addSystem(aiSystem);
         gw.addSystem(levelSystem);
         gw.addSystem(combatSystem);
         gw.addSystem(movementSystem);
