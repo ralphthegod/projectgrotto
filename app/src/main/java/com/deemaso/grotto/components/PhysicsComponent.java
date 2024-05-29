@@ -15,6 +15,7 @@ public class PhysicsComponent extends Component {
     private float shapeHeight = 0;
     private float shapeWidth = 0;
     private float gravityScale = 1;
+    private float linearDamping = 0;
 
 
     public Body getBody() {
@@ -95,5 +96,13 @@ public class PhysicsComponent extends Component {
 
     public void setGravityScale(float gravityScale) {
         this.gravityScale = gravityScale;
+    }
+
+    public float getLinearDamping() {
+        return linearDamping;
+    }
+
+    public void setLinearDamping(float linearDamping) {
+        this.linearDamping = linearDamping;
     }
 }
