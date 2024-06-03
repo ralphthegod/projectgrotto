@@ -65,8 +65,7 @@ public class LevelSystem extends System{
             int attempts = 0;
             while (!success && attempts < 5) { // Limit to 5 attempts
                 try {
-                    generate();
-                    success = true; // If generate() is successful, set success to true
+                    success = generate();
                 } catch(Exception e) {
                     Log.d("LevelSystem", "Error generating level. Retrying...");
                     e.printStackTrace();
@@ -171,7 +170,7 @@ public class LevelSystem extends System{
         }
     }
 
-    private void generate() {
+    private boolean generate() {
         isGenerating = true;
         LevelDefinitionComponent levDefComp = levelEntity.getComponent(LevelDefinitionComponent.class);
         Map<Character, LevelGenerationElementDefinition> levelGenerationElementDefinitions = new HashMap<>();
@@ -180,6 +179,14 @@ public class LevelSystem extends System{
         }
 
         char[][] level = levelGenerationEngine.generateDungeon();
+        if(level == null) {
+            Log.d("LevelSystem", "Level generation failed.");
+            return false;
+        }
+        else if(level.length == 0) {
+            Log.d("LevelSystem", "Level generation failed. Level is empty.");
+            return false;
+        }
         generatedDungeonToTiles(level, levelGenerationElementDefinitions);
 
         // Set the position of the tiles
@@ -198,6 +205,7 @@ public class LevelSystem extends System{
             setTilesPosition(entry.getValue(), x, y);
         }
         isGenerating = false;
+        return true;
     }
 
     @Override
