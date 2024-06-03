@@ -10,6 +10,8 @@ import com.deemaso.grotto.GrottoGameWorld;
 import com.deemaso.grotto.components.CameraComponent;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
+import com.deemaso.grotto.components.PlayerComponent;
+import com.deemaso.grotto.components.WeaponComponent;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.utils.RenderUtils;
 
@@ -17,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import org.jbox2d.dynamics.Body;
 
@@ -163,8 +166,10 @@ public class GrottoRenderSystem extends RenderSystem {
 
     private void draw(RenderComponent render, float x, float y, float angle, float velocityX, float velocityY, float deltaTime) {
         GrottoRenderComponent grottoRender = (GrottoRenderComponent) render;
-        grottoRender.getCanvas().save();
-        grottoRender.getCanvas().rotate((float) Math.toDegrees(angle), x, y);
+        canvas.save();
+        if(grottoRender.isConsiderAngle()){
+            canvas.rotate((float) Math.toDegrees(angle), x, y);
+        }
         Bitmap nextFrame = grottoRender.getNextFrame(deltaTime, velocityX < 0);
 
         grottoRender.getDst().set(
@@ -174,7 +179,7 @@ public class GrottoRenderSystem extends RenderSystem {
                 y + grottoRender.getScreenSemiHeight()
         );
         canvas.drawBitmap(nextFrame, grottoRender.getSrc(), grottoRender.getDst(), grottoRender.getPaint());
-        grottoRender.getCanvas().restore();
+        canvas.restore();
     }
 
     public Bitmap getBuffer() {
