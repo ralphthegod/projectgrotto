@@ -83,6 +83,7 @@ public abstract class UIElement {
     }
 
     public void addChild(UIElement element) {
+        element.setCanvas(canvas);
         children.add(element);
     }
 
