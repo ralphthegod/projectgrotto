@@ -1,9 +1,11 @@
 package com.deemaso.core;
 
+import com.deemaso.core.components.Component;
 import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /*
@@ -39,6 +41,17 @@ public class GameWorld {
     public Entity createEntityById(String id) {
         Entity e = entityManager.createEntityById(id);
         if(e != null) {
+            addEntity(e);
+        }
+        return e;
+    }
+
+    public Entity createEntityById(String id, Collection<Component> extraComponents){
+        Entity e = entityManager.createEntityById(id);
+        if(e != null) {
+            for(Component c : extraComponents){
+                e.addComponent(c);
+            }
             addEntity(e);
         }
         return e;
