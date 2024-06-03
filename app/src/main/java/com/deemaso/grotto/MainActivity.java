@@ -32,8 +32,10 @@ import com.deemaso.grotto.systems.MovementSystem;
 import com.deemaso.grotto.systems.PerceptionSystem;
 import com.deemaso.grotto.systems.PhysicsSystem;
 import com.deemaso.grotto.systems.SoundSystem;
+import com.deemaso.grotto.systems.TimeSystem;
 import com.deemaso.grotto.ui.UIManager;
 import com.deemaso.grotto.ui.elements.ExperienceCounterUIElement;
+import com.deemaso.grotto.ui.elements.HealthBarUIElement;
 import com.deemaso.grotto.ui.elements.PlayerDeathTextUIElement;
 import com.deemaso.grotto.ui.elements.TextUIElement;
 import com.example.mfaella.physicsapp.R;
@@ -103,6 +105,7 @@ public class MainActivity extends Activity {
         CombatSystem combatSystem = new CombatSystem(gw);
         LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
         AISystem aiSystem = new AISystem(gw);
+        TimeSystem timeSystem = new TimeSystem(gw);
 
         ExperienceCounterUIElement experienceCounterUIElement = new ExperienceCounterUIElement(
                  10,
@@ -112,6 +115,16 @@ public class MainActivity extends Activity {
                 resourceLoader.loadBitmapAsset("sprites/coin_icon.png"),
                 32,
                 resourceLoader.loadFont("fonts/mini4.ttf")
+        );
+
+        HealthBarUIElement healthBarUIElement = new HealthBarUIElement(
+                20,
+                80,
+                50f,
+                50f,
+                resourceLoader.loadBitmapAsset("sprites/ui_heart_full.png"),
+                resourceLoader.loadBitmapAsset("sprites/ui_heart_empty.png"),
+                resourceLoader.loadBitmapAsset("sprites/ui_heart_half.png")
         );
 
         PlayerDeathTextUIElement playerDeathTextUIElement = new PlayerDeathTextUIElement(
@@ -127,6 +140,7 @@ public class MainActivity extends Activity {
 
         gw.getUIManager().addUIElement(experienceCounterUIElement);
         gw.getUIManager().addUIElement(playerDeathTextUIElement);
+        gw.getUIManager().addUIElement(healthBarUIElement);
 
         // Order matters (input, physics, render...)
         gw.addSystem(inputSystem);
@@ -139,6 +153,7 @@ public class MainActivity extends Activity {
         gw.addSystem(combatSystem);
         gw.addSystem(movementSystem);
         gw.addSystem(levelProgressionSystem);
+        gw.addSystem(timeSystem);
         gw.addSystem(soundSystem);
         //rendering
         gw.addSystem(renderSystem);
