@@ -473,6 +473,10 @@ public class LevelGenerationEngine {
             int x = smallestRoom.centerX;
             int y = smallestRoom.centerY;
             grid[y][x] = START;
+            Log.d("LevelGenerationEngine", "Starting point placed at (" + x + ", " + y + ")");
+        }
+        else{
+            Log.e("LevelGenerationEngine", "No rooms available to place the starting point.");
         }
     }
 
@@ -524,6 +528,7 @@ public class LevelGenerationEngine {
             Room newRoom = new Room(x, y, w, h);
 
             if (rooms.stream().anyMatch(newRoom::intersects)) {
+                Log.d("LevelGenerationEngine", "Room at (" + x + ", " + y + ") intersects with another room. Skipping.");
                 continue;
             }
 
@@ -545,6 +550,11 @@ public class LevelGenerationEngine {
         }
 
         Log.d("LevelGenerationEngine", "Rooms generated: " + numRooms);
+
+        if (numRooms == 0) {
+            Log.e("LevelGenerationEngine", "No rooms were generated.");
+            return grid;
+        }
 
         ensureConnectivity();
 
