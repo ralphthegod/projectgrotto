@@ -19,6 +19,8 @@ import com.deemaso.grotto.components.NavigationComponent;
 import com.deemaso.grotto.components.PerceptionComponent;
 import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.components.TileComponent;
+import com.deemaso.grotto.components.WeaponComponent;
+import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
 import com.deemaso.grotto.utils.Helpers;
 import com.deemaso.grotto.components.CameraComponent;
@@ -120,6 +122,7 @@ public class GrottoEntityManager extends EntityManager {
                     render.setY(Helpers.getAttributeAsFloat(element, "y", 0.0f));
                     render.setZIndex(Helpers.getAttributeAsInt(element, "zIndex", 0));
                     render.setResourceIds(spriteList);
+                    render.setConsiderAngle(Helpers.getAttributeAsBoolean(element, "considerAngle", false));
                     return render;
                 }
         );
@@ -221,7 +224,8 @@ public class GrottoEntityManager extends EntityManager {
             (element) -> {
                 int experience = Helpers.getAttributeAsInt(element, "experience", 0);
                 String faction = Helpers.getAttributeAsString(element, "faction", "");
-                return new CharacterStatsComponent(experience, faction);
+                int maxHealth = Helpers.getAttributeAsInt(element, "maxHealth", 100);
+                return new CharacterStatsComponent(experience, faction, maxHealth);
             }
         );
 
@@ -255,6 +259,15 @@ public class GrottoEntityManager extends EntityManager {
                 String decisionTreeName = Helpers.getAttributeAsString(element, "decisionTree", "");
                 TreeNode decisionTree = DecisionTreeFactory.createDecisionTree(context, decisionTreeName);
                 return new AIComponent(decisionTree);
+            }
+        );
+
+        componentFactory.registerComponent(
+            "WeaponComponent",
+            (element) -> {
+                String weapon = Helpers.getAttributeAsString(element, "weapon", "");
+                List<String> ignoreFactionList = Helpers.getChildElementsAsStringList(element, "faction");
+                return new WeaponComponent(ResourceLoader.loadWeapon(context, weapon), ignoreFactionList);
             }
         );
 
