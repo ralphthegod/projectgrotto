@@ -1,0 +1,7 @@
+<weapon
+    weaponName="Goblin Melee Attack"
+    archetype=""
+    damage="1"
+    type="COLLISION"
+    knockback="5"
+/>

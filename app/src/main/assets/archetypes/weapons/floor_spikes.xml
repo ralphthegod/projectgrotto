@@ -1,0 +1,7 @@
+<weapon
+    weaponName="Floor Spikes"
+    archetype=""
+    damage="0"
+    type="COLLISION"
+    knockback="0"
+/>

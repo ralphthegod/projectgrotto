@@ -1,0 +1,8 @@
+<weapon
+    weaponName="Sword"
+    archetype="sword"
+    damage="1"
+    type="MELEE"
+    slashSpeed="0.6"
+    knockback="3"
+/>
