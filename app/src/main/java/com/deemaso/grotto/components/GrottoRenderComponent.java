@@ -28,6 +28,7 @@ public class GrottoRenderComponent extends RenderComponent {
     private int currentFrame = 0;
     private float lastFrameTime = 0.0f;
     private float animationFrameDuration;
+    private boolean considerAngle;
 
     private final Rect src = new Rect();
     private final RectF dst = new RectF();
@@ -140,4 +141,11 @@ public class GrottoRenderComponent extends RenderComponent {
     }
 
 
+    public boolean isConsiderAngle() {
+        return considerAngle;
+    }
+
+    public void setConsiderAngle(boolean considerAngle) {
+        this.considerAngle = considerAngle;
+    }
 }
