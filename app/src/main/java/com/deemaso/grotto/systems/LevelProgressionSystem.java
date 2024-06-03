@@ -52,8 +52,10 @@ public class LevelProgressionSystem extends System{
             case "COMBAT":
                 Entity winner = (Entity) event.get("winner");
                 Entity loser = (Entity) event.get("loser");
-                Progression prog = new Progression(winner, loser.getComponent(CharacterStatsComponent.class).getExperience());
-                progressions.add(prog);
+                if(winner != null && winner.hasComponent(CharacterStatsComponent.class)){
+                    Progression prog = new Progression(winner, loser.getComponent(CharacterStatsComponent.class).getExperience());
+                    progressions.add(prog);
+                }
                 loser.getComponent(CharacterStatsComponent.class).setAlive(false);
                 break;
         }
@@ -145,7 +147,7 @@ public class LevelProgressionSystem extends System{
                     gameWorld.broadcastEvent(playerEvent);
                 }
             }
-            else if(characterStatsComponent.getExperience() < 0){
+            /*else if(characterStatsComponent.getExperience() < 0){
                 characterStatsComponent.setExperience(10 + characterStatsComponent.getExperience());
                 characterStatsComponent.setLevel(characterStatsComponent.getLevel() - 1);
                 Log.d("LevelProgressionSystem", "Entity " + entity.getId() + " lost a level.");
@@ -167,8 +169,21 @@ public class LevelProgressionSystem extends System{
                     playerEvent.put("experience", characterStatsComponent.getExperience());
                     gameWorld.broadcastEvent(playerEvent);
                 }
-            }
+            }*/
         }
+    }
+
+    @Override
+    public boolean registerEntity(Entity entity) {
+        if(super.registerEntity(entity)){
+            CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
+            characterStatsComponent.setHealth(characterStatsComponent.getMaxHealth());
+            SystemEvent event = new SystemEvent("HEALTH_UPDATED");
+            event.put("entity", entity);
+            event.put("health", characterStatsComponent.getHealth());
+            event.put("maxHealth", characterStatsComponent.getMaxHealth());
+        }
+        return false;
     }
 
     @Override
