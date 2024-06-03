@@ -15,8 +15,8 @@ public class ExperienceCounterUIElement extends UIElement implements EventListen
         super(x, y, width, height);
         TextUIElement textUIElement = new TextUIElement(x + 40, y, width, height, "0/10", textSize, typeface, Color.WHITE);
         ImageUIElement imageUIElement = new ImageUIElement(x, y - 25, width, height, image);
-        children.add(textUIElement);
-        children.add(imageUIElement);
+        addChild(imageUIElement);
+        addChild(textUIElement);
     }
 
     @Override
