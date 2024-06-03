@@ -4,6 +4,7 @@ public class RenderComponent extends Component {
 
     private float x;
     private float y;
+    private float angle;
 
     private float width;
     private float height;
@@ -48,5 +49,13 @@ public class RenderComponent extends Component {
 
     public void setZIndex(int zIndex) {
         this.zIndex = zIndex;
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
     }
 }
