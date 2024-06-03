@@ -20,7 +20,7 @@ public class ImageUIElement extends UIElement {
     }
 
     public void setImage(Bitmap image) {
-        this.image = image;
+        this.image = RenderUtils.getResizedBitmap(image, (int) getWidth(), (int) getHeight());
     }
 
     @Override
