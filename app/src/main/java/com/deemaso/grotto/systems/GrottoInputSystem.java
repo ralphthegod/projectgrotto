@@ -47,7 +47,8 @@ public class GrottoInputSystem extends InputSystem {
         switch (((GrottoInputEvent) inputEvent).getType()){
             case TOUCH_DOWN:
                 Log.d("GrottoInputSystem", "Touch Down");
-                SystemEvent event = new SystemEvent("INPUT_TOUCH_DOWN");
+                SystemEvent event = new SystemEvent("ATTACK");
+                event.put("attacker", e);
                 gameWorld.broadcastEvent(event);
                 break;
             case TOUCH_UP:
