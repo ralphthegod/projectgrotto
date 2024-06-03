@@ -9,5 +9,9 @@
     <Component name="NavigationComponent" isWalkable="false" isFlyable="true"/>
     <Component name="TileComponent"/>
     <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.1" shapeWidth="0.1" isSensor="true"/>
-    <Component name="LootComponent" lootValue="-2" removeAfterCollecting="false"/>
+    <Component name="WeaponComponent" weapon="floor_spikes">
+        <ignoreFactions>
+            <faction>enemy</faction>
+        </ignoreFactions>
+    </Component>
 </Entity>
