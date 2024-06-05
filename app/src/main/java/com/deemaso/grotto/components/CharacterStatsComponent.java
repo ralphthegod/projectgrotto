@@ -31,6 +31,10 @@ public class CharacterStatsComponent extends Component {
         return stats.get(key);
     }
 
+    public boolean hasStat(String key) {
+        return stats.containsKey(key);
+    }
+
     public void setStat(String key, Object value) {
         stats.put(key, value);
     }
