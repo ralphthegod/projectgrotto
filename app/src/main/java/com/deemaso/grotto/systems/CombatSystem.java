@@ -156,10 +156,10 @@ public class CombatSystem extends System implements EventListener {
                 }
 
                 characterStatsComponent.setStat("health", (int) characterStatsComponent.getStat("health") - damageTaken);
-                SystemEvent event = new SystemEvent("HEALTH_UPDATED");
+                SystemEvent event = new SystemEvent("STAT_UPDATED");
                 event.put("entity", entity);
-                event.put("health", characterStatsComponent.getStat("health"));
-                event.put("maxHealth", characterStatsComponent.getStat("maxHealth"));
+                event.put("stat", "health");
+                event.put("value", characterStatsComponent.getStat("health"));
                 gameWorld.broadcastEvent(event);
                 if((int) characterStatsComponent.getStat("health") <= 0){
                     characterStatsComponent.setAlive(false);
