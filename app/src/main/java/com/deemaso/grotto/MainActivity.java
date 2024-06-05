@@ -26,7 +26,7 @@ import com.deemaso.grotto.systems.CombatSystem;
 import com.deemaso.grotto.systems.GrottoCollisionSystem;
 import com.deemaso.grotto.systems.GrottoInputSystem;
 import com.deemaso.grotto.systems.GrottoRenderSystem;
-import com.deemaso.grotto.systems.LevelProgressionSystem;
+import com.deemaso.grotto.systems.CharacterStatsSystem;
 import com.deemaso.grotto.systems.LevelSystem;
 import com.deemaso.grotto.systems.MovementSystem;
 import com.deemaso.grotto.systems.PerceptionSystem;
@@ -72,7 +72,6 @@ public class MainActivity extends Activity {
         //Music backgroundMusic = audio.newMusic("soundtrack.mp3");
         //backgroundMusic.play();
 
-        // Game world
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         Box physicalSize = new Box(XMIN, YMIN, XMAX, YMAX),
@@ -80,6 +79,7 @@ public class MainActivity extends Activity {
 
         ResourceLoader resourceLoader = new ResourceLoader(this.getResources());
 
+        // Game world
         GrottoGameWorld gw = new GrottoGameWorld(new GrottoEntityManager(getApplicationContext()), this, resourceLoader);
 
         renderView = new AndroidFastRenderView(this, gw, metrics.widthPixels, metrics.heightPixels);
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
         LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
         CombatSystem combatSystem = new CombatSystem(gw);
-        LevelProgressionSystem levelProgressionSystem = new LevelProgressionSystem(gw);
+        CharacterStatsSystem levelProgressionSystem = new CharacterStatsSystem(gw);
         AISystem aiSystem = new AISystem(gw);
         TimeSystem timeSystem = new TimeSystem(gw);
 
