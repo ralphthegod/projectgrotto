@@ -149,7 +149,7 @@ public class UIManager implements EventListener {
             float textSize = Helpers.getAttributeAsFloat(element, "textSize", 20);
             int color = Color.parseColor(Helpers.getAttributeAsString(element, "color", "white"));
             Typeface typeface = resourceLoader.loadFont(Helpers.getAttributeAsString(element, "typeface", "default"));
-            return new LevelLabelUIElement(x, y, 0, 0, entity, "Lvl " + entity.getComponent(CharacterStatsComponent.class).getLevel(), textSize, typeface, color);
+            return new LevelLabelUIElement(x, y, 0, 0, entity, "Lvl " + (int) entity.getComponent(CharacterStatsComponent.class).getStat("level"), textSize, typeface, color);
         });
     }
 
