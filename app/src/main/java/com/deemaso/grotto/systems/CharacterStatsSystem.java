@@ -19,13 +19,13 @@ import java.util.Queue;
  * A level progression system for Project Grotto.
  * This system handles the progression of characters in the game (Entities with CharacterStatsComponent).
  */
-public class LevelProgressionSystem extends System{
+public class CharacterStatsSystem extends System{
 
     /**
      * Creates a new level progression system.
      * @param gameWorld The game world
      */
-    public LevelProgressionSystem(GameWorld gameWorld) {
+    public CharacterStatsSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(CharacterStatsComponent.class), true);
     }
 
@@ -50,7 +50,7 @@ public class LevelProgressionSystem extends System{
                             entity1 : entity2;
                     Entity playerEntity = entity1.hasComponent(PlayerComponent.class) ?
                             entity1 : entity2;
-                    Progression prog = new Progression(playerEntity, lootEntity.getComponent(LootComponent.class).getValue());
+                    Progression prog = new Progression(playerEntity, lootEntity.getComponent(LootComponent.class).getValue(), lootEntity.getComponent(LootComponent.class).getStat());
                     if(lootEntity.getComponent(LootComponent.class).isRemoveAfterCollecting()){
                         gameWorld.markEntityForDeletion(lootEntity);
                     }
@@ -62,7 +62,7 @@ public class LevelProgressionSystem extends System{
                 Entity winner = (Entity) event.get("winner");
                 Entity loser = (Entity) event.get("loser");
                 if(winner != null && winner.hasComponent(CharacterStatsComponent.class)){
-                    Progression prog = new Progression(winner, (int) loser.getComponent(CharacterStatsComponent.class).getStat("experience"));
+                    Progression prog = new Progression(winner, (int) loser.getComponent(CharacterStatsComponent.class).getStat("experience"), "experience");
                     progressions.add(prog);
                 }
                 loser.getComponent(CharacterStatsComponent.class).setAlive(false);
@@ -72,24 +72,34 @@ public class LevelProgressionSystem extends System{
 
     /**
      * A progression object. <br>
-     * This object represents a progression of a character in the game.
+     * This object includes the entity to progress, the value of the progression and the stat to progress.
      */
     private static class Progression {
         private final Entity entity;
-        private final int experience;
+        private final int value;
+        private final String stat;
 
-        public Progression(Entity entity, int experience) {
+        /**
+         * Creates a new progression object.
+         * @param entity The entity to progress
+         * @param value The value of the progression
+         * @param stat The stat to progress
+         */
+        public Progression(Entity entity, int value, String stat) {
             this.entity = entity;
-            this.experience = experience;
+            this.value = value;
+            this.stat = stat;
         }
 
         public Entity getEntity() {
             return entity;
         }
 
-        public int getExperience() {
-            return experience;
+        public int getValue() {
+            return value;
         }
+
+        public String getStat() { return stat; }
     }
 
     @Override
@@ -120,19 +130,25 @@ public class LevelProgressionSystem extends System{
     private void processProgressions(){
         Progression progression = progressions.poll();
         // Consume a progression per update (frame)
-        if(progression != null){
+        if (progression != null) {
             CharacterStatsComponent characterStatsComponent = progression.getEntity().getComponent(CharacterStatsComponent.class);
-            characterStatsComponent.setStat("experience", (int) characterStatsComponent.getStat("experience") + progression.getExperience());
-            SystemEvent event = new SystemEvent("EXPERIENCE_UPDATED");
-            event.put("entity", progression.getEntity());
-            event.put("experience", characterStatsComponent.getStat("experience"));
-            gameWorld.broadcastEvent(event);
-            if(progression.entity.hasComponent(PlayerComponent.class)){
-                SystemEvent playerEvent = new SystemEvent("PLAYER_EXPERIENCE_UPDATED");
-                playerEvent.put("experience", characterStatsComponent.getStat("experience"));
-                gameWorld.broadcastEvent(playerEvent);
+            String stat = progression.getStat();
+            int newValue = (int)characterStatsComponent.getStat(stat) + progression.getValue();
+
+            String maxStat = "max" + Character.toUpperCase(stat.charAt(0)) + stat.substring(1);
+            if (characterStatsComponent.hasStat(maxStat)) {
+                int maxStatValue = (int) characterStatsComponent.getStat(maxStat);
+                newValue = Math.min(newValue, maxStatValue);
             }
-            Log.d("LevelProgressionSystem", "Entity " + progression.getEntity().getId() + " got" + progression.getExperience() + " experience.");
+
+            characterStatsComponent.setStat(stat, newValue);
+            Log.d("LevelProgressionSystem", "Entity " + progression.getEntity().getId() + " got " + progression.getValue() + " " + progression.getStat() + ".");
+
+            SystemEvent event = new SystemEvent("STAT_UPDATED");
+            event.put("entity", progression.getEntity());
+            event.put("stat", progression.getStat());
+            event.put("value", newValue);
+            gameWorld.broadcastEvent(event);
         }
 
         // Check for level up
@@ -149,39 +165,13 @@ public class LevelProgressionSystem extends System{
                 event.put("level", characterStatsComponent.getStat("level"));
                 gameWorld.broadcastEvent(event);
 
-                SystemEvent event2 = new SystemEvent("EXPERIENCE_UPDATED");
+                SystemEvent event2 = new SystemEvent("STAT_UPDATED");
                 event2.put("entity", entity);
-                event2.put("experience", characterStatsComponent.getStat("experience"));
+                event2.put("stat", "experience");
+                event2.put("value", characterStatsComponent.getStat("experience"));
                 gameWorld.broadcastEvent(event2);
-                if(entity.hasComponent(PlayerComponent.class)){
-                    SystemEvent playerEvent = new SystemEvent("PLAYER_EXPERIENCE_UPDATED");
-                    playerEvent.put("experience", characterStatsComponent.getStat("experience"));
-                    gameWorld.broadcastEvent(playerEvent);
-                }
             }
-            /*else if(characterStatsComponent.getExperience() < 0){
-                characterStatsComponent.setExperience(10 + characterStatsComponent.getExperience());
-                characterStatsComponent.setLevel(characterStatsComponent.getLevel() - 1);
-                Log.d("LevelProgressionSystem", "Entity " + entity.getId() + " lost a level.");
-                // Emit level down event (e.g. for UI ...)
-                SystemEvent event = new SystemEvent("LEVEL_DOWN");
-                event.put("entity", entity);
-                event.put("level", characterStatsComponent.getLevel());
-                gameWorld.broadcastEvent(event);
-                if(characterStatsComponent.getLevel() < 1){
-                    characterStatsComponent.setAlive(false);
-                }
 
-                SystemEvent event2 = new SystemEvent("EXPERIENCE_UPDATED");
-                event2.put("entity", entity);
-                event2.put("experience", characterStatsComponent.getExperience());
-                gameWorld.broadcastEvent(event2);
-                if(entity.hasComponent(PlayerComponent.class)){
-                    SystemEvent playerEvent = new SystemEvent("PLAYER_EXPERIENCE_UPDATED");
-                    playerEvent.put("experience", characterStatsComponent.getExperience());
-                    gameWorld.broadcastEvent(playerEvent);
-                }
-            }*/
         }
     }
 
@@ -190,10 +180,12 @@ public class LevelProgressionSystem extends System{
         if(super.registerEntity(entity)){
             CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
             characterStatsComponent.setStat("health", characterStatsComponent.getStat("maxHealth"));
-            SystemEvent event = new SystemEvent("HEALTH_UPDATED");
+            SystemEvent event = new SystemEvent("STAT_UPDATED");
             event.put("entity", entity);
-            event.put("health", characterStatsComponent.getStat("health"));
-            event.put("maxHealth", characterStatsComponent.getStat("maxHealth"));
+            event.put("stat", "health");
+            event.put("value", characterStatsComponent.getStat("maxHealth"));
+            gameWorld.broadcastEvent(event);
+            return true;
         }
         return false;
     }
