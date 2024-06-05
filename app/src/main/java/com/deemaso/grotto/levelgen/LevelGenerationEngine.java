@@ -485,14 +485,35 @@ public class LevelGenerationEngine {
      */
     private void placeEndingPoint() {
         if (!rooms.isEmpty()) {
-            Room startRoom = rooms.get(0);
-            Room farthestRoom = rooms.stream()
-                    .max((r1, r2) -> Double.compare(calculateDistance(startRoom.centerX, startRoom.centerY, r1.centerX, r1.centerY),
-                            calculateDistance(startRoom.centerX, startRoom.centerY, r2.centerX, r2.centerY)))
-                    .orElse(null);
-            int x = farthestRoom.centerX;
-            int y = farthestRoom.centerY;
-            grid[y][x] = END;
+            Room startRoom = rooms.stream().filter(room -> {
+                for (int y = room.y; y < room.y + room.h; y++) {
+                    for (int x = room.x; x < room.x + room.w; x++) {
+                        if (grid[y][x] == START) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }).findFirst().orElse(null);
+
+            if (startRoom != null) {
+                Room farthestRoom = rooms.stream()
+                        .filter(room -> room != startRoom)
+                        .max((r1, r2) -> Double.compare(calculateDistance(startRoom.centerX, startRoom.centerY, r1.centerX, r1.centerY),
+                                calculateDistance(startRoom.centerX, startRoom.centerY, r2.centerX, r2.centerY)))
+                        .orElse(null);
+
+                if (farthestRoom != null) {
+                    int x = farthestRoom.centerX;
+                    int y = farthestRoom.centerY;
+                    grid[y][x] = END;
+                    Log.d("LevelGenerationEngine", "Ending point placed at (" + x + ", " + y + ")");
+                } else {
+                    Log.e("LevelGenerationEngine", "No room found to place the ending point.");
+                }
+            } else {
+                Log.e("LevelGenerationEngine", "Starting room not found.");
+            }
         }
     }
 
