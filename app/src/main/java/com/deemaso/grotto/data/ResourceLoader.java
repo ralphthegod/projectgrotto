@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import com.deemaso.grotto.ai.DecisionTreeFactory;
+import com.deemaso.grotto.ai.TreeNode;
 import com.deemaso.grotto.items.MeleeWeapon;
 import com.deemaso.grotto.items.RangedWeapon;
 import com.deemaso.grotto.items.Weapon;
@@ -89,6 +91,20 @@ public class ResourceLoader {
         Typeface font = Typeface.createFromAsset(resources.getAssets(), resource);
         fonts.put(resource, font);
         return font;
+    }
+
+    public static TreeNode loadDecisionTree(Context context, String path) {
+        try {
+            InputStream inputStream = context.getAssets().open("archetypes/decision_trees/" + path + ".xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputStream);
+            doc.getDocumentElement().normalize();
+            return DecisionTreeFactory.createDecisionTree(doc.getDocumentElement());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static Weapon loadWeapon(Context context, String path) {
