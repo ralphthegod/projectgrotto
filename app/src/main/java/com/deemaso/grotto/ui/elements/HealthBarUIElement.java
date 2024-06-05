@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.deemaso.core.Entity;
 import com.deemaso.core.events.EventListener;
 import com.deemaso.core.events.SystemEvent;
+import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.ui.UIElement;
 
@@ -24,13 +25,13 @@ public class HealthBarUIElement extends UIElement implements EventListener {
 
     @Override
     public void onEvent(SystemEvent event) {
-        if(event.getCode().equals("HEALTH_UPDATED")){
+        if(event.getCode().equals("STAT_UPDATED")){
             Entity entity = (Entity) event.get("entity");
-            if(!entity.hasComponent(PlayerComponent.class)){
+            if(!entity.hasComponent(PlayerComponent.class) || !event.get("stat").equals("health")){
                 return;
             }
-            int maxHealth = (int) event.get("maxHealth");
-            int currentHealth = (int) event.get("health");
+            int maxHealth = (int) entity.getComponent(CharacterStatsComponent.class).getStat("maxHealth");
+            int currentHealth = (int) event.get("value");
             int heartCount = children.size();
             int requiredHeartCount = maxHealth / 2;
 

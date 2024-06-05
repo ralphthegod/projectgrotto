@@ -5,8 +5,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import com.deemaso.core.Entity;
 import com.deemaso.core.events.EventListener;
 import com.deemaso.core.events.SystemEvent;
+import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.ui.UIElement;
 
 public class ExperienceCounterUIElement extends UIElement implements EventListener {
@@ -26,11 +28,15 @@ public class ExperienceCounterUIElement extends UIElement implements EventListen
 
     @Override
     public void onEvent(SystemEvent event) {
-        if(event.getCode().equals("PLAYER_EXPERIENCE_UPDATED"))
+        if(event.getCode().equals("STAT_UPDATED"))
         {
+            Entity entity = (Entity) event.get("entity");
+            if(!entity.hasComponent(PlayerComponent.class) || !event.get("stat").equals("experience")){
+                return;
+            }
             for (UIElement child : children) {
                 if(child instanceof TextUIElement){
-                    ((TextUIElement) child).setText(event.get("experience") + "/10");
+                    ((TextUIElement) child).setText(event.get("value") + "/10");
                 }
             }
         }
