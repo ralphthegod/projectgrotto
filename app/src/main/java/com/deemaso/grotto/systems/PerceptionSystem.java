@@ -18,10 +18,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A perception system for Project Grotto.
+ * This system handles the perception of entities in the game.
+ */
 public class PerceptionSystem extends System {
 
     private final World physicsWorld;
 
+    /**
+     * Creates a new perception system.
+     * @param gameWorld The game world
+     * @param physicsWorld The physics world
+     */
     public PerceptionSystem(GameWorld gameWorld, World physicsWorld) {
         super(gameWorld, Arrays.asList(PerceptionComponent.class, PhysicsComponent.class), true);
         this.physicsWorld = physicsWorld;
@@ -72,12 +81,6 @@ public class PerceptionSystem extends System {
     @Override
     protected void finalize() {
 
-    }
-
-    private float distanceBetween(Body body1, Body body2) {
-        Vec2 pos1 = body1.getPosition();
-        Vec2 pos2 = body2.getPosition();
-        return pos1.sub(pos2).length();
     }
 
     @Override

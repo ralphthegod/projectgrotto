@@ -14,6 +14,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * A sound system for Project Grotto.
+ * This system handles the playing of sounds in the game.
+ */
 public class SoundSystem extends System{
 
     private long timeOfLastSound = 0;
@@ -21,6 +25,11 @@ public class SoundSystem extends System{
     private Audio audio;
     private final Queue<Sound> soundQueue = new LinkedList<>();
 
+    /**
+     * Creates a new sound system.
+     * @param gameWorld The game world
+     * @param audio The audio object
+     */
     public SoundSystem(GameWorld gameWorld, Audio audio) {
         super(gameWorld, Arrays.asList(SoundComponent.class, MusicComponent.class), false);
         this.audio = audio;

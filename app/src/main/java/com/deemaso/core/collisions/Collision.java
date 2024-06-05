@@ -2,12 +2,17 @@ package com.deemaso.core.collisions;
 
 import com.deemaso.core.Entity;
 
-/** An unordered pair of game objects.
- *
+/**
+ * Represents a collision between two entities.
  */
 public class Collision {
     Entity a, b;
 
+    /**
+     * Creates a new collision between two entities.
+     * @param a The first entity
+     * @param b The second entity
+     */
     public Collision(Entity a, Entity b) {
         this.a = a;
         this.b = b;
@@ -27,10 +32,18 @@ public class Collision {
                (a.equals(otherCollision.b) && b.equals(otherCollision.a));
     }
 
+    /**
+     * Gets the first entity in the collision.
+     * @return The first entity
+     */
     public Entity getA() {
         return a;
     }
 
+    /**
+     * Gets the second entity in the collision.
+     * @return The second entity
+     */
     public Entity getB() {
         return b;
     }

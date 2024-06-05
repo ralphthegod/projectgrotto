@@ -9,22 +9,40 @@ import com.deemaso.core.events.SystemEvent;
 import com.deemaso.grotto.data.ResourceLoader;
 import com.deemaso.grotto.ui.UIManager;
 
+/**
+ * The game world for Project Grotto.
+ * This class represents the game world in Project Grotto.
+ */
 public class GrottoGameWorld extends GameWorld{
 
     final private Activity activity;
     final private ResourceLoader resourceLoader;
     private UIManager uiManager;
 
+    /**
+     * Creates a new game world.
+     * @param entityManager The entity manager
+     * @param activity The activity
+     * @param resourceLoader The resource loader
+     */
     public GrottoGameWorld(EntityManager entityManager, Activity activity, ResourceLoader resourceLoader) {
         super(entityManager);
         this.activity = activity;
         this.resourceLoader = resourceLoader;
     }
 
+    /**
+     * Sets the UI manager.
+     * @param uiManager The UI manager
+     */
     public void setUIManager(UIManager uiManager) {
         this.uiManager = uiManager;
     }
 
+    /**
+     * Gets the UI manager.
+     * @return The UI manager
+     */
     public UIManager getUIManager() {
         return uiManager;
     }
@@ -61,10 +79,18 @@ public class GrottoGameWorld extends GameWorld{
         }
     }
 
+    /**
+     * Gets the activity.
+     * @return The activity
+     */
     public Activity getActivity() {
         return activity;
     }
 
+    /**
+     * Gets the resource loader.
+     * @return The resource loader
+     */
     public ResourceLoader getResourceLoader() {
         return resourceLoader;
     }

@@ -1,10 +1,10 @@
 <Entity id="0">
     <Component name="LevelDefinitionComponent"
         minRoomSize="6"
-        maxRoomSize="13"
-        maxRooms="8"
-        gridWidth="100"
-        gridHeight="100"
+        maxRoomSize="9"
+        maxRooms="4"
+        gridWidth="50"
+        gridHeight="50"
         levelProgressionMultiplierIncrease="0.3"
         levelProgressionMultiplier="1.1"
     >

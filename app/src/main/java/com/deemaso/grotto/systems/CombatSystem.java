@@ -30,11 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+/**
+ * A combat system.
+ */
 public class CombatSystem extends System implements EventListener {
 
     private final Collection<MeleeAttack> meleeAttacks = new HashSet<>();
     private final Queue<Hit> hits = new LinkedList<>();
 
+    /**
+     * A melee attack. Used to animate melee attacks.
+     */
     private static class MeleeAttack {
         private final Entity attacker;
         private final Entity weapon;
@@ -69,6 +75,9 @@ public class CombatSystem extends System implements EventListener {
         }
     }
 
+    /**
+     * A hit. Used to store hits.
+     */
     private static class Hit {
         private final Entity weapon;
         private final Entity entity;
@@ -91,6 +100,10 @@ public class CombatSystem extends System implements EventListener {
         super(gameWorld, requiredComponents, requireAllComponents);
     }
 
+    /**
+     * Creates a new combat system.
+     * @param gameWorld The game world
+     */
     public CombatSystem(GameWorld gameWorld){
         super(gameWorld, Arrays.asList(CharacterStatsComponent.class), true);
     }

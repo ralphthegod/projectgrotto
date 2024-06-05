@@ -18,6 +18,10 @@ public class GameWorld {
     final private EntityManager entityManager;
     final private List<System> systems = new ArrayList<>();
 
+    /**
+     * Creates a new GameWorld.
+     * @param entityManager The EntityManager to use
+     */
     public GameWorld(
             EntityManager entityManager
     )
@@ -25,6 +29,11 @@ public class GameWorld {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Adds an entity to the game world.
+     * The entity is added to the EntityManager and registered with all systems.
+     * @param entity The entity to add
+     */
     public void addEntity(Entity entity) {
         entityManager.addEntity(entity);
         for(System s : systems) {
@@ -32,12 +41,21 @@ public class GameWorld {
         }
     }
 
+    /**
+     * Broadcasts an event to all systems.
+     * @param event The event to broadcast
+     */
     public void broadcastEvent(SystemEvent event) {
         for(System s : systems) {
             s.onEvent(event);
         }
     }
 
+    /**
+     * Creates an entity by id and adds it to the game world.
+     * @param id The archetype id of the entity to create
+     * @return The created entity
+     */
     public Entity createEntityById(String id) {
         Entity e = entityManager.createEntityById(id);
         if(e != null) {
@@ -46,6 +64,12 @@ public class GameWorld {
         return e;
     }
 
+    /**
+     * Creates an entity by id and adds it to the game world.
+     * @param id The id of the entity to create
+     * @param extraComponents Extra components to add to the entity
+     * @return The created entity
+     */
     public Entity createEntityById(String id, Collection<Component> extraComponents){
         Entity e = entityManager.createEntityById(id);
         if(e != null) {
@@ -57,10 +81,19 @@ public class GameWorld {
         return e;
     }
 
+    /**
+     * Adds a system to the game world.
+     * @param system The system to add
+     */
     public void addSystem(System system) {
         systems.add(system);
     }
 
+    /**
+     * Gets a system by class.
+     * @param systemClass The class of the system to get
+     * @return The system, or null if not found
+     */
     public System getSystem(Class<? extends System> systemClass) {
         for(System s : systems) {
             if(s.getClass() == systemClass) {
@@ -70,6 +103,11 @@ public class GameWorld {
         return null;
     }
 
+    /**
+     * Marks an entity for deletion.
+     * The entity will be removed from all systems at the end of the frame.
+     * @param e The entity to mark for deletion.
+     */
     public void markEntityForDeletion(Entity e) {
         for(System s : systems) {
             s.unregisterEntity(e);
@@ -77,6 +115,9 @@ public class GameWorld {
         entityManager.markEntityForDeletion(e);
     }
 
+    /**
+     * Deletes all entities that are marked for deletion.
+     */
     public void deleteMarkedEntities() {
         List<Entity> entities = entityManager.getEntitiesMarkedForDeletion();
         for(System s : systems) {
@@ -85,24 +126,29 @@ public class GameWorld {
         entityManager.removeMarkedEntities();
     }
 
+    /**
+     * Updates the game world.
+     * @param dt The time since the last frame
+     */
     public void update(float dt) {
-
-        // Update all systems
         for (System s : systems) {
             s.update(dt);
         }
-
-        // Remove entities that are marked for deletion
         deleteMarkedEntities();
-
     }
 
+    /**
+     * Pauses all systems.
+     */
     public void pause() {
         for(System s : systems) {
             s.pause();
         }
     }
 
+    /**
+     * Resumes all systems.
+     */
     public void resume() {
         for(System s : systems) {
             s.resume();

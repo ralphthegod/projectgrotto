@@ -11,6 +11,9 @@ import com.deemaso.core.events.SystemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a system in the game world.
+ */
 public abstract class System implements EventListener {
 
     final protected GameWorld gameWorld;
@@ -19,6 +22,12 @@ public abstract class System implements EventListener {
     final protected List<Class<? extends Component>> requiredComponents = new ArrayList<>();
     final protected boolean requireAllComponents;
 
+    /**
+     * Creates a new system with the given required components.
+     * @param gameWorld The game world to use
+     * @param requiredComponents The required components
+     * @param requireAllComponents True if all components are required, false if any component is required
+     */
     protected System(
             GameWorld gameWorld,
             List<Class<? extends Component>> requiredComponents,
@@ -29,6 +38,11 @@ public abstract class System implements EventListener {
         this.requiredComponents.addAll(requiredComponents);
     }
 
+    /**
+     * Registers an entity with the system.
+     * @param entity The entity to register
+     * @return True if the entity was registered, false otherwise
+     */
     public boolean registerEntity(Entity entity) {
         if (requireAllComponents) {
             if(entity.hasComponents(requiredComponents)) {
@@ -46,16 +60,27 @@ public abstract class System implements EventListener {
         return false;
     }
 
+    /**
+     * Unregisters an entity with the system.
+     * @param entity The entity to unregister
+     */
     public void unregisterEntity(Entity entity) {
         entitiesToDelete.add(entity);
     }
 
+    /**
+     * Unregisters a list of entities with the system.
+     * @param entities The entities to unregister
+     */
     public void unregisterEntities(List<Entity> entities) {
         for (Entity entity : entities) {
             unregisterEntity(entity);
         }
     }
 
+    /**
+     * Deletes entities marked for deletion.
+     * */
     public void deleteEntities() {
         for (Entity entity : entitiesToDelete) {
             entities.remove(entity);
@@ -63,9 +88,14 @@ public abstract class System implements EventListener {
         entitiesToDelete.clear();
     }
 
+    /**
+     * Updates the system.
+     * @param dt The time since the last update
+     * */
     public void update(float dt){
         deleteEntities();
     }
+
     protected abstract void finalize();
     public abstract void pause();
     public abstract void resume();

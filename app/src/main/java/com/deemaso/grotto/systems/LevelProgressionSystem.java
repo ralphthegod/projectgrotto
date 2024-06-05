@@ -15,7 +15,16 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * A level progression system for Project Grotto.
+ * This system handles the progression of characters in the game (Entities with CharacterStatsComponent).
+ */
 public class LevelProgressionSystem extends System{
+
+    /**
+     * Creates a new level progression system.
+     * @param gameWorld The game world
+     */
     public LevelProgressionSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(CharacterStatsComponent.class), true);
     }
@@ -61,7 +70,10 @@ public class LevelProgressionSystem extends System{
         }
     }
 
-
+    /**
+     * A progression object. <br>
+     * This object represents a progression of a character in the game.
+     */
     private static class Progression {
         private final Entity entity;
         private final int experience;

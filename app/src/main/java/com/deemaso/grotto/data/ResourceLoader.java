@@ -27,6 +27,9 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+/**
+ * Loads resources from the assets folder.
+ */
 public class ResourceLoader {
     private final Resources resources;
     private final BitmapFactory.Options options;
@@ -35,12 +38,21 @@ public class ResourceLoader {
     private final Map<String, Bitmap> bitmaps = new HashMap<>();
     private final Map<String, Typeface> fonts = new HashMap<>();
 
+    /**
+     * Creates a new ResourceLoader.
+     * @param resources The resources
+     */
     public ResourceLoader(Resources resources) {
         this.resources = resources;
         this.options = new BitmapFactory.Options();
         this.options.inScaled = false;
     }
 
+    /**
+     * Loads a bitmap from the resources.
+     * @param resourceId The resource ID
+     * @return The bitmap
+     */
     public Bitmap loadBitmap(int resourceId) {
         String key = String.valueOf(resourceId);
         if (bitmaps.containsKey(key)) {
@@ -53,6 +65,11 @@ public class ResourceLoader {
         }
     }
 
+    /**
+     * Loads a bitmap from the assets.
+     * @param asset The asset
+     * @return The bitmap
+     */
     public Bitmap loadBitmapAsset(String asset) {
         if (bitmaps.containsKey(asset)) {
             return bitmaps.get(asset);
@@ -68,6 +85,11 @@ public class ResourceLoader {
         }
     }
 
+    /**
+     * Loads a list of bitmaps from the assets.
+     * @param assets The assets
+     * @return The bitmaps
+     */
     public List<Bitmap> loadBitmapAssets(List<String> assets) {
         List<Bitmap> bitmaps = new ArrayList<>();
         for (String asset : assets) {
@@ -76,6 +98,11 @@ public class ResourceLoader {
         return bitmaps;
     }
 
+    /**
+     * Loads a list of bitmaps from the resources.
+     * @param resourceIds The resource IDs
+     * @return The bitmaps
+     */
     public List<Bitmap> loadBitmaps(List<Integer> resourceIds) {
         List<Bitmap> bitmaps = new ArrayList<>();
         for (int resourceId : resourceIds) {
@@ -84,6 +111,11 @@ public class ResourceLoader {
         return bitmaps;
     }
 
+    /**
+     * Loads a font from the assets.
+     * @param resource The resource
+     * @return The font
+     */
     public Typeface loadFont(String resource) {
         if (fonts.containsKey(resource)) {
             return fonts.get(resource);
@@ -93,6 +125,11 @@ public class ResourceLoader {
         return font;
     }
 
+    /**
+     * Loads a decision tree from the assets.
+     * @param path The path
+     * @return The decision tree
+     */
     public static TreeNode loadDecisionTree(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open("archetypes/decision_trees/" + path + ".xml");
@@ -107,6 +144,11 @@ public class ResourceLoader {
         }
     }
 
+    /**
+     * Loads a weapon from the assets.
+     * @param path The path
+     * @return The weapon
+     */
     public static Weapon loadWeapon(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open("archetypes/weapons/" + path + ".xml");

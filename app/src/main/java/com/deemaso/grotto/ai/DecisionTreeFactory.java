@@ -1,23 +1,16 @@
 package com.deemaso.grotto.ai;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.deemaso.grotto.ai.actions.IdleAction;
 import com.deemaso.grotto.ai.actions.MoveToHostileTargetAction;
 import com.deemaso.grotto.ai.decisions.AnyHostileNearDecision;
-
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+/**
+ * Factory for creating decision trees.
+ */
 public class DecisionTreeFactory {
 
     private static final Map<String, Supplier<Decision>> decisionSuppliers = new HashMap<>();

@@ -1,5 +1,8 @@
 package com.deemaso.core.components;
 
+/**
+ * Represents a render component.
+ */
 public class RenderComponent extends Component {
 
     private float x;
@@ -10,6 +13,7 @@ public class RenderComponent extends Component {
     private float height;
 
     private int zIndex;
+
 
     public float getHeight() {
         return height;

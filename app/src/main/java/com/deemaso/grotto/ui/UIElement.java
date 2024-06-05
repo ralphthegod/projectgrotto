@@ -8,6 +8,9 @@ import com.deemaso.core.Box;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * For rendering UI elements on the screen.
+ */
 public abstract class UIElement {
 
     protected Canvas canvas;
@@ -18,6 +21,13 @@ public abstract class UIElement {
     protected boolean isVisible = true;
     protected List<UIElement> children = new ArrayList<>();
 
+    /**
+     * Creates a new UI element.
+     * @param x The x position
+     * @param y The y position
+     * @param width The width
+     * @param height The height
+     */
     public UIElement(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
@@ -25,6 +35,11 @@ public abstract class UIElement {
         this.height = height;
     }
 
+    /**
+     * Draws the UI element.
+     * @param screenX The x position on the screen
+     * @param screenY The y position on the screen
+     */
     public void draw(float screenX, float screenY){
         for (UIElement child : children) {
             child.draw(screenX + child.x, screenY + child.y);
@@ -82,6 +97,9 @@ public abstract class UIElement {
         this.canvas = canvas;
     }
 
+    /**
+     * Adds a child to the UI element.
+     * */
     public void addChild(UIElement element) {
         element.setCanvas(canvas);
         children.add(element);

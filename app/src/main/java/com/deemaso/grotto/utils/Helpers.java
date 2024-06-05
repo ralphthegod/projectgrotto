@@ -8,6 +8,9 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A helper class for common operations.
+ */
 public class Helpers {
     public static float getAttributeAsFloat(Element element, String attribute, float defaultValue) {
         String value = element.getAttribute(attribute);

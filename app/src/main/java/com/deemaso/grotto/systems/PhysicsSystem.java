@@ -19,11 +19,10 @@ import org.jbox2d.dynamics.World;
 import java.util.Arrays;
 
 /**
-    * PhysicsSystem is a system that handles the physics of the game.
+    * A physics system for Project Grotto.
     * It uses the (J)Box2D physics engine to simulate physics.
  */
 public class PhysicsSystem extends System{
-
 
     World physicsWorld;
 
@@ -36,6 +35,14 @@ public class PhysicsSystem extends System{
     private final int positionIterations;
     private final int particleIterations;
 
+    /**
+     * Creates a new physics system.
+     * @param gameWorld The game world
+     * @param physicsWorld The physics world
+     * @param velocityIterations The velocity iterations
+     * @param positionIterations The position iterations
+     * @param particleIterations The particle iterations
+     */
     public PhysicsSystem(
             GameWorld gameWorld,
             World physicsWorld,
@@ -68,10 +75,6 @@ public class PhysicsSystem extends System{
         gameWorld.broadcastEvent(event);
     }
 
-    /**
-     * Register an entity with the PhysicsSystem.
-     * This method creates a body for the entity and adds it to the physics world.
-     */
     @Override
     public boolean registerEntity(Entity entity) {
         boolean hasBeenAdded = super.registerEntity(entity);
@@ -112,6 +115,11 @@ public class PhysicsSystem extends System{
         physicsWorld.destroyBody(physics.getBody());
     }
 
+    /**
+     * Updates the gravity of the physics world.
+     * @param x The x component of the gravity
+     * @param y The y component of the gravity
+     */
     public void updateGravity(float x, float y) {
         gravityX = x;
         gravityY = y;

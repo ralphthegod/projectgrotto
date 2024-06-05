@@ -14,15 +14,27 @@ import org.jbox2d.callbacks.ContactListener;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * A collision system for Project Grotto.
+ */
 public class GrottoCollisionSystem extends CollisionSystem {
 
     private final ContactListener contactListener;
 
+    /**
+     * Creates a new collision system.
+     * @param gameWorld The game world
+     */
     public GrottoCollisionSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(PhysicsComponent.class));
         contactListener = new CollisionListener(collisionPool);
     }
 
+    /**
+     * Creates a new collision system.
+     * @param gameWorld The game world
+     * @param contactListener The contact listener
+     */
     public GrottoCollisionSystem(GameWorld gameWorld, ContactListener contactListener) {
         super(gameWorld, Arrays.asList(PhysicsComponent.class));
         this.contactListener = contactListener;
@@ -41,6 +53,10 @@ public class GrottoCollisionSystem extends CollisionSystem {
 
     }
 
+    /**
+     * Gets the contact listener.
+     * @return The contact listener
+     */
     public ContactListener getContactListener() {
         return contactListener;
     }

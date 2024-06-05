@@ -1,7 +1,12 @@
 package com.deemaso.grotto.ai;
 
-import com.deemaso.core.Entity;
-
+/**
+ * Represents a decision tree node.
+ */
 public abstract class TreeNode {
+    /**
+     * Executes the node.
+     * @param context The AI context
+     */
     public abstract void execute(AIContext context);
 }

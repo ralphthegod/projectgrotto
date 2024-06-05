@@ -30,6 +30,9 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+/**
+ * The UI manager handles the UI elements in the game.
+ */
 public class UIManager implements EventListener {
     private final List<UIElement> uiElements = new ArrayList<>();
     private Box currentView;
@@ -41,6 +44,13 @@ public class UIManager implements EventListener {
 
     private final ResourceLoader resourceLoader;
 
+    /**
+     * Creates a new UI manager.
+     * @param buffer The buffer
+     * @param screenSize The screen size
+     * @param context The context
+     * @param resourceLoader The resource loader
+     */
     public UIManager(Bitmap buffer, Box screenSize, Context context, ResourceLoader resourceLoader) {
         this.buffer = buffer;
         this.context = context;
@@ -49,12 +59,19 @@ public class UIManager implements EventListener {
         loadUIFactoryCreators();
     }
 
+    /**
+     * Draws the UI elements.
+     */
     public void draw() {
         for (UIElement element : uiElements) {
             draw(element);
         }
     }
 
+    /**
+     * Draws a UI element.
+     * @param element The element
+     */
     public void draw(UIElement element){
         if (element.isVisible()) {
             if(element instanceof GameSpaceUIElement) {
@@ -98,11 +115,19 @@ public class UIManager implements EventListener {
         element.draw(screen_x, screen_y);
     }
 
+    /**
+     * Adds a UI element.
+     * @param element The element
+     */
     public void addUIElement(UIElement element) {
         element.setCanvas(new Canvas(buffer));
         uiElements.add(element);
     }
 
+    /**
+     * Creates UI elements for an entity.
+     * @param entity The entity
+     */
     public void createEntityGameSpaceUIElements(Entity entity) {
         try {
             InputStream inputStream = context.getAssets().open("archetypes/" + entity.getId() + ".xml");
@@ -125,6 +150,10 @@ public class UIManager implements EventListener {
         }
     }
 
+    /**
+     * Removes UI elements for an entity.
+     * @param entity The entity
+     */
     public void removeEntityGameSpaceUIElements(Entity entity) {
         List<GameSpaceUIElement> elementsToRemove = new ArrayList<>();
         for (UIElement element : uiElements) {

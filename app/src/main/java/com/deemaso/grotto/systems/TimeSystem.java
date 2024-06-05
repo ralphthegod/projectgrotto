@@ -10,8 +10,16 @@ import com.deemaso.grotto.components.LimitedLifeComponent;
 
 import java.util.Arrays;
 
+/**
+ * A time system for Project Grotto.
+ * This system handles the time of entities in the game.
+ */
 public class TimeSystem extends System {
 
+    /**
+     * Creates a new time system.
+     * @param gw The game world
+     */
     public TimeSystem(GameWorld gw) {
         super(gw, Arrays.asList(LimitedLifeComponent.class), true);
     }

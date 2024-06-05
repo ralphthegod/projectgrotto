@@ -16,10 +16,18 @@ import com.deemaso.grotto.input.InputEventType;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * An input system for Project Grotto.
+ */
 public class GrottoInputSystem extends InputSystem {
 
     private final TouchHandler touchHandler;
 
+    /**
+     * Creates a new input system.
+     * @param gameWorld The game world
+     * @param touchHandler The touch handler
+     */
     public GrottoInputSystem(GameWorld gameWorld, TouchHandler touchHandler) {
         super(gameWorld, Arrays.asList(InputComponent.class));
         this.touchHandler = touchHandler;

@@ -13,8 +13,16 @@ import org.jbox2d.common.Vec2;
 
 import java.util.Arrays;
 
+/**
+ * A movement system for Project Grotto.
+ * This system handles the movement of entities in the game.
+ */
 public class MovementSystem extends System {
 
+    /**
+     * Creates a new movement system.
+     * @param gameWorld The game world
+     */
     public MovementSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(MovementComponent.class, PhysicsComponent.class), true);
     }

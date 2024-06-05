@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Factory for creating decision tree nodes.
+ */
 public class NodeFactory {
     private static final Map<String, Function<Element, TreeNode>> nodeCreators = new HashMap<>();
 
@@ -16,6 +19,11 @@ public class NodeFactory {
         // More????? (Selector, Sequence, etc.)
     }
 
+    /**
+     * Creates a tree node from an XML element.
+     * @param element The XML element
+     * @return The tree node
+     */
     public static TreeNode createNode(Element element) {
         String nodeName = element.getTagName();
         Function<Element, TreeNode> creator = nodeCreators.get(nodeName);
@@ -25,6 +33,9 @@ public class NodeFactory {
         throw new IllegalArgumentException("Unknown node type: " + nodeName);
     }
 
+    /*
+    * Creates a decision node from an XML element.
+    * */
     private static DecisionNode createDecisionNode(Element element) {
         Decision decision = DecisionTreeFactory.createDecision(element.getAttribute("type"));
 
@@ -49,6 +60,9 @@ public class NodeFactory {
         return new DecisionNode(decision, trueNode, falseNode);
     }
 
+    /*
+    * Creates an action node from an XML element.
+     */
     private static ActionNode createActionNode(Element element) {
         Action action = DecisionTreeFactory.createAction(element.getAttribute("type"));
         return new ActionNode(action);

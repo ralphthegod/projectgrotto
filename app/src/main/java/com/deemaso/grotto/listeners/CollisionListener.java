@@ -16,25 +16,35 @@ import org.jbox2d.dynamics.contacts.Contact;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * A listener for collisions.
+ */
 public class CollisionListener implements ContactListener {
 
     private final CollisionPool collisionPool;
     private final Collection<Collision> cache = new HashSet<>();
 
+    /**
+     * Creates a new collision listener.
+     * @param collisionPool The collision pool
+     */
     public CollisionListener(CollisionPool collisionPool) {
         this.collisionPool = collisionPool;
     }
 
+    /**
+     * Gets the collisions.
+     * @return The collisions
+     */
     public Collection<Collision> getCollisions() {
         Collection<Collision> result = new HashSet<>(cache);
         cache.clear();
         return result;
     }
 
-    /** Warning: this method runs inside world.step
+    /* Warning: this method runs inside world.step
      *  Hence, it cannot change the physical world.
      */
-
     @Override
     public void beginContact(Contact contact) {
         Fixture fa = contact.getFixtureA(),

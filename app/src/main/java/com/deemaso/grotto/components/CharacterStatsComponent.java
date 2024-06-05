@@ -5,10 +5,20 @@ import com.deemaso.core.components.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents a character stats component. <br>
+ * Contains the stats of the character.
+ */
 public class CharacterStatsComponent extends Component {
     private boolean isAlive = true;
     private final Map<String, Object> stats = new HashMap<>();
 
+    /**
+     * Creates a new CharacterStatsComponent.
+     * @param experience The experience
+     * @param faction The faction
+     * @param maxHealth The maximum health
+     */
     public CharacterStatsComponent(int experience, String faction, int maxHealth) {
         stats.put("experience", experience);
         stats.put("level", 1);

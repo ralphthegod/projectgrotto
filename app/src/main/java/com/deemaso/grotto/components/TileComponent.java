@@ -2,12 +2,22 @@ package com.deemaso.grotto.components;
 
 import com.deemaso.core.components.Component;
 
+/**
+ * Represents a tile component.
+ */
 public class TileComponent extends Component {
     private int x;
     private int y;
     private float effectiveX;
     private float effectiveY;
 
+    /**
+     * Creates a new TileComponent.
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param effectiveX The effective x coordinate
+     * @param effectiveY The effective y coordinate
+     */
     public TileComponent(int x, int y, float effectiveX, float effectiveY) {
         this.x = x;
         this.y = y;
@@ -30,10 +40,18 @@ public class TileComponent extends Component {
         return y;
     }
 
+    /**
+     * Get the effective x coordinate.
+     * @return The effective x coordinate
+     */
     public float getEffectiveX() {
         return effectiveX;
     }
 
+    /**
+     * Get the effective y coordinate.
+     * @return The effective y coordinate
+     */
     public float getEffectiveY() {
         return effectiveY;
     }

@@ -1,8 +1,14 @@
 package com.deemaso.grotto.levelgen;
 
+/**
+ * Contains the different types of distributions. <br>
+ * CLUSTERED: The points are close to each other. <br>
+ * SPARSE: The points are far from each other. <br>
+ * TODO: Internal and external distributions.
+ */
 public enum DistributionType {
-    CLUSTERED, // Clustered means that the element is placed in a cluster
-    SPARSE, // Sparse means that the element is placed in a random location
-    INTERNAL, // Internal means that the element is placed inside the room (near the center)
-    EXTERNAL // External means that the element is placed on the edge of the room
+    CLUSTERED,
+    SPARSE,
+    INTERNAL,
+    EXTERNAL
 }

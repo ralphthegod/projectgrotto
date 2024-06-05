@@ -5,6 +5,10 @@ import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
 
 import java.util.List;
 
+/**
+ * Represents a level definition component. <br>
+ * Contains the definitions for the level generation elements.
+ */
 public class LevelDefinitionComponent extends Component {
 
     private int minRoomSize;
@@ -16,6 +20,17 @@ public class LevelDefinitionComponent extends Component {
     private final float levelProgressionMultiplierIncrease;
     private float levelProgressionMultiplier;
 
+    /**
+     * Creates a new LevelDefinitionComponent.
+     * @param minRoomSize The minimum room size
+     * @param maxRoomSize The maximum room size
+     * @param maxRooms The maximum number of rooms
+     * @param gridWidth The grid width
+     * @param gridHeight The grid height
+     * @param levelGenerationElementDefinitions The level generation element definitions
+     * @param levelProgressionMultiplierIncrease The level progression multiplier increase
+     * @param levelProgressionMultiplier The level progression multiplier
+     */
     public LevelDefinitionComponent(
             int minRoomSize,
             int maxRoomSize,

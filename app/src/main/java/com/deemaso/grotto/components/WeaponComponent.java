@@ -8,12 +8,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a weapon component.
+ */
 public class WeaponComponent extends Component {
     private Weapon weapon;
     private Entity owner;
     private Collection<String> ignoreFactions;
     private long lastFired = 0;
 
+    /**
+     * Creates a new WeaponComponent.
+     * @param weapon The weapon
+     */
     public WeaponComponent(Weapon weapon, Collection<String> ignoreFactions) {
         this.weapon = weapon;
         this.ignoreFactions = ignoreFactions;
@@ -27,6 +34,10 @@ public class WeaponComponent extends Component {
         this.weapon = weapon;
     }
 
+    /**
+     * Get the owner of the weapon.
+     * @return The owner
+     */
     public Entity getOwner() {
         return owner;
     }
@@ -35,6 +46,10 @@ public class WeaponComponent extends Component {
         this.owner = owner;
     }
 
+    /**
+     * Get the factions that the weapon should ignore.
+     * @return The factions
+     */
     public Collection<String> getIgnoreFactions() {
         return ignoreFactions;
     }

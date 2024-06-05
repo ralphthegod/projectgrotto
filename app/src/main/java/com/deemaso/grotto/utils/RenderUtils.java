@@ -3,6 +3,9 @@ package com.deemaso.grotto.utils;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
+/**
+ * A utility class for rendering.
+ */
 public class RenderUtils {
 
     static public Bitmap getResizedBitmap(Bitmap bitmap, int newWidth, int newHeight) {

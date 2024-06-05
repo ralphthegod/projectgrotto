@@ -1,5 +1,8 @@
 package com.deemaso.grotto.input;
 
+/**
+ * Contains the different types of input events.
+ * */
 public enum InputEventType {
     TOUCH_DOWN,
     TOUCH_UP,

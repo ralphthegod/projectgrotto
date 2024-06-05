@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents a level generation element definition. <br>
+ * */
 public class LevelGenerationElementDefinition{
     private char symbol;
     private String name;
@@ -21,6 +24,9 @@ public class LevelGenerationElementDefinition{
     // Map key is probability of this tile being chosen
     private final Map<TileArchetype,Float> tileArchetypes;
 
+    /**
+     * It contains the archetype of a tile and the probability of it being chosen.
+     * */
     public static class TileArchetype{
         private final String archetypeId;
         private final String topArchetypeId;
@@ -73,7 +79,6 @@ public class LevelGenerationElementDefinition{
         this.tileArchetypes = tileArchetypes;
     }
 
-    // Getters e Setters
     public char getSymbol() {
         return symbol;
     }
@@ -142,6 +147,10 @@ public class LevelGenerationElementDefinition{
         this.distribution = distribution;
     }
 
+    /**
+     *  Get a random tile archetype based on the probability of each tile archetype.
+     *  @return A random tile archetype.
+     * */
     public TileArchetype getWeightedRandomTileArchetype() {
         if (tileArchetypes.size() == 1) {
             return tileArchetypes.keySet().iterator().next();
@@ -164,6 +173,11 @@ public class LevelGenerationElementDefinition{
         }
     }
 
+    /**
+     * Load a level generation element definition from an XML element.
+     * @param element The XML element
+     * @return The level generation element definition
+     * */
     public static LevelGenerationElementDefinition loadFromXML(Element element) {
         char symbol = element.getAttribute("symbol").charAt(0);
         String name = element.getAttribute("name");

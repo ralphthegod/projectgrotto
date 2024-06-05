@@ -6,10 +6,17 @@ import android.hardware.SensorEventListener;
 
 import com.deemaso.grotto.systems.PhysicsSystem;
 
+/**
+ * Listens to the accelerometer sensor and updates the gravity of the physics system.
+ */
 public class AccelerometerListener implements SensorEventListener {
 
     private final PhysicsSystem physicsSystem;
 
+    /**
+     * Creates a new AccelerometerListener.
+     * @param physicsSystem The physics system
+     */
     public AccelerometerListener(PhysicsSystem physicsSystem)
     {
         this.physicsSystem = physicsSystem;

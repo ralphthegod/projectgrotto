@@ -27,16 +27,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
-/*
-    * Manages rendering of entities in the Grotto game.
-    * It uses Canvas and Bitmap from Android SDK to draw entities.
-    * It also uses the PhysicsComponent to determine the position of entities.
+/**
+ * A render system for Project Grotto.
+ * This system renders entities with a GrottoRenderComponent.
+ * It uses a buffer to draw the entities (Android Bitmap).
  */
 public class GrottoRenderSystem extends RenderSystem {
 
     private final Canvas canvas;
     private final Bitmap buffer;
 
+    /**
+     * Creates a new render system.
+     * @param gameWorld The game world
+     * @param physicalSize The physical size
+     * @param screenSize The screen size
+     * @param buffer The buffer
+     */
     public GrottoRenderSystem(
             GameWorld gameWorld,
             Box physicalSize,

@@ -4,7 +4,10 @@ import com.deemaso.core.components.Component;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 
-
+/**
+ * Represents a physics component.
+ * It uses the JBox2D physics engine.
+ */
 public class PhysicsComponent extends Component {
     private Body body;
     private BodyType bodyType;
@@ -17,7 +20,10 @@ public class PhysicsComponent extends Component {
     private float gravityScale = 1;
     private float linearDamping = 0;
 
-
+    /**
+     * Get JBox2D body.
+     * @return The body
+     * */
     public Body getBody() {
         return body;
     }
@@ -82,6 +88,10 @@ public class PhysicsComponent extends Component {
         this.shapeWidth = shapeWidth;
     }
 
+    /**
+     * Check if the body is a sensor.
+     * @return True if the body is a sensor, false otherwise
+     */
     public boolean isSensor() {
         return isSensor;
     }
@@ -90,6 +100,10 @@ public class PhysicsComponent extends Component {
         isSensor = sensor;
     }
 
+    /**
+     * Get the gravity scale.
+     * @return The gravity scale
+     */
     public float getGravityScale() {
         return gravityScale;
     }
