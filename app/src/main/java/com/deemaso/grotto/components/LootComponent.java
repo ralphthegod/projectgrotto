@@ -9,15 +9,18 @@ import com.deemaso.core.components.Component;
 public class LootComponent extends Component {
     private final int value;
     private final boolean removeAfterCollecting;
+    private final String stat;
 
     /**
      * Creates a new LootComponent.
      * @param value The value of the loot
      * @param removeAfterCollecting Whether the loot should be removed after collecting
+     * @param stat The stat to modify
      */
-    public LootComponent(int value, boolean removeAfterCollecting) {
+    public LootComponent(int value, boolean removeAfterCollecting, String stat) {
         this.value = value;
         this.removeAfterCollecting = removeAfterCollecting;
+        this.stat = stat;
     }
 
     public int getValue() {
@@ -26,5 +29,9 @@ public class LootComponent extends Component {
 
     public boolean isRemoveAfterCollecting() {
         return removeAfterCollecting;
+    }
+
+    public String getStat() {
+        return stat;
     }
 }
