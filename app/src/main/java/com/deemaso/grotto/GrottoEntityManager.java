@@ -215,7 +215,8 @@ public class GrottoEntityManager extends EntityManager {
             (element) -> {
                 int value = Helpers.getAttributeAsInt(element, "lootValue", 0);
                 boolean removeAfterCollecting = Helpers.getAttributeAsBoolean(element, "removeAfterCollecting", true);
-                return new LootComponent(value, removeAfterCollecting);
+                String stat = Helpers.getAttributeAsString(element, "stat", "");
+                return new LootComponent(value, removeAfterCollecting, stat);
             }
         );
 
