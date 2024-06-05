@@ -142,16 +142,16 @@ public class CombatSystem extends System implements EventListener {
                     damageTaken = weaponComponent.getWeapon().getDamage();
                 }
 
-                characterStatsComponent.setHealth(characterStatsComponent.getHealth() - damageTaken);
+                characterStatsComponent.setStat("health", (int) characterStatsComponent.getStat("health") - damageTaken);
                 SystemEvent event = new SystemEvent("HEALTH_UPDATED");
                 event.put("entity", entity);
-                event.put("health", characterStatsComponent.getHealth());
-                event.put("maxHealth", characterStatsComponent.getMaxHealth());
+                event.put("health", characterStatsComponent.getStat("health"));
+                event.put("maxHealth", characterStatsComponent.getStat("maxHealth"));
                 gameWorld.broadcastEvent(event);
-                if(characterStatsComponent.getHealth() <= 0){
+                if((int) characterStatsComponent.getStat("health") <= 0){
                     characterStatsComponent.setAlive(false);
                 }
-                Log.d("CombatSystem", "Entity " + entity.getId() + " took " + damageTaken + " damage. Health: " + characterStatsComponent.getHealth());
+                Log.d("CombatSystem", "Entity " + entity.getId() + " took " + damageTaken + " damage. Health: " + characterStatsComponent.getStat("health"));
             }
         }
     }
@@ -161,7 +161,7 @@ public class CombatSystem extends System implements EventListener {
             WeaponComponent weaponComponent = weapon.getComponent(WeaponComponent.class);
             boolean isCollisionWeapon = !(weaponComponent.getWeapon() instanceof MeleeWeapon) && !(weaponComponent.getWeapon() instanceof RangedWeapon);
 
-            boolean isNotSameFaction = !weaponComponent.getIgnoreFactions().contains(target.getComponent(CharacterStatsComponent.class).getFaction());
+            boolean isNotSameFaction = !weaponComponent.getIgnoreFactions().contains(target.getComponent(CharacterStatsComponent.class).getStat("faction"));
             if (weaponComponent.getOwner() != target && isNotSameFaction) {
                 if (weapon.hasComponent(CharacterStatsComponent.class) && isCollisionWeapon) {
                     hits.add(new Hit(weapon, target));
