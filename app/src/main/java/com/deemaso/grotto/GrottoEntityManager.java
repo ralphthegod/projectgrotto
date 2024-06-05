@@ -257,7 +257,7 @@ public class GrottoEntityManager extends EntityManager {
             "AIComponent",
             (element) -> {
                 String decisionTreeName = Helpers.getAttributeAsString(element, "decisionTree", "");
-                TreeNode decisionTree = DecisionTreeFactory.createDecisionTree(context, decisionTreeName);
+                TreeNode decisionTree = ResourceLoader.loadDecisionTree(context, decisionTreeName);
                 return new AIComponent(decisionTree);
             }
         );
