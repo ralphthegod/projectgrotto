@@ -219,6 +219,27 @@
             </TileArchetypes>
         </ElementDefinition>
         <ElementDefinition
+            symbol="H"
+            name="health"
+            globalMinQuantity="10"
+            globalMaxQuantity="20"
+            canBeInRoom="true"
+            canBeInCorridor="true"
+            minDistanceBetweenElements="0"
+            distribution="1">
+            <TileArchetypes>
+                <TileArchetype
+                    probability="1"
+                    archetypeId="health_potion"
+                    baseArchetypeId="floor_1"
+                    topArchetypeId="-1"
+                    rightArchetypeId="-1"
+                    bottomArchetypeId="-1"
+                    leftArchetypeId="-1"
+                />
+            </TileArchetypes>
+        </ElementDefinition>
+        <ElementDefinition
             symbol="C"
             name="chest"
             globalMinQuantity="1"

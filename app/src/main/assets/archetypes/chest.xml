@@ -7,5 +7,5 @@
         </sprites>
     </Component>
     <Component name="PhysicsComponent" density="0.5" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4"/>
-    <Component name="LootComponent" lootValue="10"/>
+    <Component name="LootComponent" lootValue="10" stat="experience"/>
 </Entity>
