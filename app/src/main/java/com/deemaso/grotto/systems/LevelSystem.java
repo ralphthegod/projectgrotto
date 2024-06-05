@@ -114,41 +114,49 @@ public class LevelSystem extends System{
         return x + "," + y;
     }
 
-    private void generatedDungeonToTiles(char[][] level, Map<Character, LevelGenerationElementDefinition> levelGenerationElementDefinitions){
+    private void generatedDungeonToTiles(char[][] level, Map<Character, LevelGenerationElementDefinition> levelGenerationElementDefinitions) {
         /*
-        * An alternative would be to create a pattern detection system that would detect patterns
-        * and replace them with the appropriate tiles. This would allow for more complex level
-        * (e.g. side walls, corners, etc.)
-        *  */
-        for(int y = 0; y < level.length; y++) {
-            for(int x = 0; x < level[y].length; x++) {
+         * An alternative would be to create a pattern detection system that would detect patterns
+         * and replace them with the appropriate tiles. This would allow for more complex level
+         * (e.g. side walls, corners, etc.)
+         *  */
+        for (int y = 0; y < level.length; y++) {
+            for (int x = 0; x < level[y].length; x++) {
                 char symbol = level[y][x];
                 LevelGenerationElementDefinition def = levelGenerationElementDefinitions.get(symbol);
-                if(def != null) {
+                if (def != null) {
                     LevelGenerationElementDefinition.TileArchetype tile = def.getWeightedRandomTileArchetype();
                     Entity tileEntity = gameWorld.createEntityById(tile.getArchetypeId());
-                    if(tileEntity.hasComponent(TileComponent.class)){
+                    if (tileEntity.hasComponent(TileComponent.class)) {
                         addTile(x, y, tileEntity);
-                        if(!tile.getBaseArchetypeId().equals("-1"))
-                            addTile(x, y, gameWorld.createEntityById(tile.getBaseArchetypeId()));
-                        if(!tile.getBottomArchetypeId().equals("-1"))
-                            addTile(x, y + 1, gameWorld.createEntityById(tile.getBottomArchetypeId()));
-                        if(!tile.getTopArchetypeId().equals("-1"))
-                            addTile(x, y - 1, gameWorld.createEntityById(tile.getTopArchetypeId()));
-                        if(!tile.getLeftArchetypeId().equals("-1"))
-                            addTile(x - 1, y, gameWorld.createEntityById(tile.getLeftArchetypeId()));
-                        if(!tile.getRightArchetypeId().equals("-1"))
-                            addTile(x + 1, y, gameWorld.createEntityById(tile.getRightArchetypeId()));
-                    }
-                    else{
+                        addSurroundingTiles(x, y, tile);
+                    } else {
                         addEntity(x, y, tileEntity);
-                        if(!tile.getBaseArchetypeId().equals("-1"))
-                            addTile(x, y, gameWorld.createEntityById(tile.getBaseArchetypeId()));
+                        addBaseTile(x, y, tile);
                     }
                 }
             }
         }
     }
+
+    private void addSurroundingTiles(int x, int y, LevelGenerationElementDefinition.TileArchetype tile) {
+        if (!tile.getBaseArchetypeId().equals("-1"))
+            addTile(x, y, gameWorld.createEntityById(tile.getBaseArchetypeId()));
+        if (!tile.getBottomArchetypeId().equals("-1"))
+            addTile(x, y + 1, gameWorld.createEntityById(tile.getBottomArchetypeId()));
+        if (!tile.getTopArchetypeId().equals("-1"))
+            addTile(x, y - 1, gameWorld.createEntityById(tile.getTopArchetypeId()));
+        if (!tile.getLeftArchetypeId().equals("-1"))
+            addTile(x - 1, y, gameWorld.createEntityById(tile.getLeftArchetypeId()));
+        if (!tile.getRightArchetypeId().equals("-1"))
+            addTile(x + 1, y, gameWorld.createEntityById(tile.getRightArchetypeId()));
+    }
+
+    private void addBaseTile(int x, int y, LevelGenerationElementDefinition.TileArchetype tile) {
+        if (!tile.getBaseArchetypeId().equals("-1"))
+            addTile(x, y, gameWorld.createEntityById(tile.getBaseArchetypeId()));
+    }
+
 
     private void setTilesPosition(Entity tile, int x, int y) {
         if(tile.hasComponent(TileComponent.class)){
@@ -176,6 +184,23 @@ public class LevelSystem extends System{
         Map<Character, LevelGenerationElementDefinition> levelGenerationElementDefinitions = new HashMap<>();
         for(LevelGenerationElementDefinition def : levDefComp.getLevelGenerationElementDefinitions()) {
             levelGenerationElementDefinitions.put(def.getSymbol(), def);
+        }
+
+        boolean hasPlayer = false;
+        boolean hasEnding = false;
+
+        // Check if the level has a player and ending
+        for(LevelGenerationElementDefinition def : levDefComp.getLevelGenerationElementDefinitions()) {
+            if(def.getSymbol() == 'S') {
+                hasPlayer = true;
+            }
+            if(def.getSymbol() == 'E') {
+                hasEnding = true;
+            }
+        }
+
+        if(!hasPlayer || !hasEnding){
+            throw new RuntimeException("LevelGenerationElementDefinitions must have a player (S) and an ending (E) element.");
         }
 
         char[][] level = levelGenerationEngine.generateDungeon();
