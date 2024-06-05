@@ -20,7 +20,7 @@
     <Component name="CharacterStatsComponent" experience="7" faction="enemy" maxHealth="5"/>
     <Component name="MovementComponent" speed="2" power="0.7"/>
     <Component name="PerceptionComponent" perceptionRadius="5"/>
-    <Component name="AIComponent" />
+    <Component name="AIComponent" decisionTree="base_enemy_dt"/>
     <Component name="WeaponComponent" weapon="goblin_melee_attack">
         <ignoreFactions>
             <faction>enemy</faction>

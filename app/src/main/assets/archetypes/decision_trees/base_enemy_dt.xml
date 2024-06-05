@@ -1,0 +1,8 @@
+<DecisionNode type="AnyHostileNear">
+    <TrueNode>
+        <ActionNode type="MoveToHostileTarget"/>
+    </TrueNode>
+    <FalseNode>
+        <ActionNode type="Idle"/>
+    </FalseNode>
+</DecisionNode>
