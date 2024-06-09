@@ -169,7 +169,8 @@ public class ResourceLoader {
             }
             else if(type.equals("RANGED")){
                 float bulletSpeed = Helpers.getAttributeAsFloat(doc.getDocumentElement(), "bulletSpeed", 0);
-                return new RangedWeapon(name, archetype, damage, bulletSpeed, knockback);
+                float reloadTime = Helpers.getAttributeAsFloat(doc.getDocumentElement(), "reloadTime", 0);
+                return new RangedWeapon(name, archetype, damage, bulletSpeed, knockback, reloadTime);
             }
             else{
                 return new Weapon(name, archetype, damage, knockback);
