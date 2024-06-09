@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class CharacterStatsComponent extends Component {
     private boolean isAlive = true;
-    private final Map<String, Object> stats = new HashMap<>();
+    private Map<String, Object> stats = new HashMap<>();
 
     /**
      * Creates a new CharacterStatsComponent.
@@ -29,6 +29,14 @@ public class CharacterStatsComponent extends Component {
 
     public Object getStat(String key) {
         return stats.get(key);
+    }
+
+    public void setStats(Map<String,Object> stats){
+        this.stats = stats;
+    }
+
+    public Map<String, Object> getStats(){
+        return stats;
     }
 
     public boolean hasStat(String key) {
