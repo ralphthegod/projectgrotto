@@ -93,15 +93,19 @@ public class MainActivity extends Activity {
         Audio audio = new AndroidAudio(this);
         SoundSystem soundSystem = new SoundSystem(gw, audio);
 
-        World physicsWorld = new World(new Vec2(0,0));
-        PhysicsSystem physicsSystem = new PhysicsSystem(gw, physicsWorld, 8,3,3);
-        PerceptionSystem perceptionSystem = new PerceptionSystem(gw, physicsWorld);
         GrottoCollisionSystem collisionSystem = new GrottoCollisionSystem(gw);
-        physicsWorld.setContactListener(collisionSystem.getContactListener());
+        PhysicsSystem physicsSystem = new PhysicsSystem(gw, collisionSystem.getContactListener(), 8,3,3);
+        PerceptionSystem perceptionSystem = new PerceptionSystem(gw);
 
         MovementSystem movementSystem = new MovementSystem(gw);
         InputSystem inputSystem = new GrottoInputSystem(gw, new MultiTouchHandler(renderView, 1, 1));
-        LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f);
+
+        LevelSystem.PlayerData playerData = null;
+        if (getIntent().getExtras() != null) {
+            playerData = (LevelSystem.PlayerData) getIntent().getExtras().getSerializable("playerData");
+        }
+
+        LevelSystem levelSystem = new LevelSystem(gw, true, "dungeon_1", 1f, playerData);
         CombatSystem combatSystem = new CombatSystem(gw);
         CharacterStatsSystem levelProgressionSystem = new CharacterStatsSystem(gw);
         AISystem aiSystem = new AISystem(gw);
@@ -128,7 +132,7 @@ public class MainActivity extends Activity {
         );
 
         PlayerDeathTextUIElement playerDeathTextUIElement = new PlayerDeathTextUIElement(
-                200,
+                180,
                 600,
                 0,
                 0,
@@ -168,12 +172,6 @@ public class MainActivity extends Activity {
                 gw.getResourceLoader().loadFont("fonts/mini4.ttf"),
                 Color.WHITE
         ));
-
-
-        //GameObject a = gw.addGameObject(new DynamicBoxGO(gw, 0, -2));
-        //GameObject b = gw.addGameObject(new DynamicBoxGO(gw, 1, -3));
-        //new MyRevoluteJoint(gw, a.body, b.body);
-        // new MyPrismaticJoint(gw, a.body, b.body);
 
         // Just for info
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
