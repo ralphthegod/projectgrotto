@@ -15,12 +15,13 @@ public class AnyHostileNearDecision implements Decision {
         Entity self = (Entity) context.get("self");
         if(self != null){
             PerceptionComponent perceptionComponent = self.getComponent(PerceptionComponent.class);
-            for(Entity entity: perceptionComponent.getPerceivedEntities()){
+            for(Entity entity: perceptionComponent.getPerceivedEntities().keySet()){
                 if(entity.hasComponent(CharacterStatsComponent.class)){
                     CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
                     if(!characterStatsComponent.getStat("faction").equals(self.getComponent(CharacterStatsComponent.class).getStat("faction"))){
                         context.remove("target");
                         context.put("target", entity);
+                        context.put("targetDistance", perceptionComponent.getPerceivedEntities().get(entity));
                         return true;
                     }
                 }
