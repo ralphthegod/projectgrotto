@@ -5,7 +5,9 @@ import android.util.Log;
 import com.deemaso.core.Entity;
 import com.deemaso.core.components.Component;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Set;
  */
 public class PerceptionComponent extends Component {
     private float perceptionRadius;
-    private final Set<Entity> perceivedEntities = new HashSet<>();
+    private final Map<Entity, Float> perceivedEntities = new HashMap<>();
 
     /**
      * Creates a new PerceptionComponent.
@@ -33,10 +35,9 @@ public class PerceptionComponent extends Component {
     }
 
     /**
-     * Get the entities perceived by the entity.
-     * @return The perceived entities
-     */
-    public Set<Entity> getPerceivedEntities() {
+     * Gets the perceived entities.
+     * */
+    public Map<Entity, Float> getPerceivedEntities() {
         return perceivedEntities;
     }
 
@@ -44,8 +45,8 @@ public class PerceptionComponent extends Component {
         perceivedEntities.clear();
     }
 
-    public void addPerceivedEntity(Entity entity) {
-        perceivedEntities.add(entity);
+    public void addPerceivedEntity(Entity entity, float distance) {
+        perceivedEntities.put(entity, distance);
     }
 
     public void removePerceivedEntity(Entity entity) {
@@ -53,7 +54,7 @@ public class PerceptionComponent extends Component {
     }
 
     public boolean hasPerceivedEntity(Entity entity) {
-        return perceivedEntities.contains(entity);
+        return perceivedEntities.containsKey(entity);
     }
 
 }
