@@ -8,6 +8,7 @@ import android.util.Log;
 import com.deemaso.core.Entity;
 import com.deemaso.core.events.EventListener;
 import com.deemaso.core.events.SystemEvent;
+import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.PlayerComponent;
 import com.deemaso.grotto.ui.UIElement;
 
@@ -37,6 +38,18 @@ public class ExperienceCounterUIElement extends UIElement implements EventListen
             for (UIElement child : children) {
                 if(child instanceof TextUIElement){
                     ((TextUIElement) child).setText(event.get("value") + "/10");
+                }
+            }
+        }
+        else if(event.getCode().equals("PLAYER_LOADED"))
+        {
+            Entity entity = (Entity) event.get("entity");
+            if(entity.hasComponent(PlayerComponent.class)){
+                CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
+                for (UIElement child : children) {
+                    if(child instanceof TextUIElement){
+                        ((TextUIElement) child).setText(characterStatsComponent.getStat("experience") + "/10");
+                    }
                 }
             }
         }
