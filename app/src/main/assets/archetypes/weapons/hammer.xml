@@ -1,0 +1,8 @@
+<weapon
+    weaponName="Hammer"
+    archetype="hammer"
+    damage="2"
+    type="MELEE"
+    slashSpeed="2"
+    knockback="4"
+/>

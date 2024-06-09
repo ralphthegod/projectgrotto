@@ -1,0 +1,9 @@
+<weapon
+    weaponName="Arrow"
+    archetype="arrow"
+    damage="1"
+    type="RANGED"
+    bulletSpeed="4"
+    knockback="1.5"
+    reloadTime="1"
+/>

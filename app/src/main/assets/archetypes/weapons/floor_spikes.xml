@@ -1,7 +1,7 @@
 <weapon
     weaponName="Floor Spikes"
     archetype=""
-    damage="0"
+    damage="1"
     type="COLLISION"
     knockback="0"
 />
