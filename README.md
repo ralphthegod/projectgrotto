@@ -2,6 +2,11 @@
 
 Project Grotto is an Android game development project that leverages the Entity Component System (ECS) pattern. The project is developed in Android Studio using Java.
 
+![](https://i.imgur.com/VmTR5Ed.gif)
+![](https://i.imgur.com/wSeDSWG.gif)
+![](https://i.imgur.com/6I0dqnE.gif)
+![](https://i.imgur.com/vI2oh9R.gif)
+
 ## The Game
 
 Project Grotto is a roguelike dungeon-crawler where players must explore a deep and dangerous dungeon. The game features several key mechanics:
