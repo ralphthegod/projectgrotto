@@ -1,0 +1,15 @@
+<DecisionNode type="AnyHostileNear">
+    <TrueNode>
+        <DecisionNode type="IsShootingDistance">
+            <TrueNode>
+                <ActionNode type="Shoot"/>
+            </TrueNode>
+            <FalseNode>
+                <ActionNode type="MoveToHostileTarget"/>
+            </FalseNode>
+        </DecisionNode>
+    </TrueNode>
+    <FalseNode>
+        <ActionNode type="Idle"/>
+    </FalseNode>
+</DecisionNode>

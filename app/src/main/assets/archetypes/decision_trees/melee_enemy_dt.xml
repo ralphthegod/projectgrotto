@@ -1,0 +1,15 @@
+<DecisionNode type="AnyHostileNear">
+    <TrueNode>
+        <DecisionNode type="IsInMeleeRange">
+            <TrueNode>
+                <ActionNode type="MeleeAttack"/>
+            </TrueNode>
+            <FalseNode>
+                <ActionNode type="MoveToHostileTarget"/>
+            </FalseNode>
+        </DecisionNode>
+    </TrueNode>
+    <FalseNode>
+        <ActionNode type="Idle"/>
+    </FalseNode>
+</DecisionNode>
