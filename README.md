@@ -19,3 +19,4 @@ The development of the project is based on the following resources:
 - DragMe: https://github.com/mfaella/DragMe
 - JBox2D: https://github.com/jbox2d/jbox2d
 - 16x16 DungeonTileset II by 0x72: https://0x72.itch.io/dungeontileset-ii
+- Minifantasy Dungeon Audio: https://leohpaz.itch.io/minifantasy-dungeon-sfx-pack
