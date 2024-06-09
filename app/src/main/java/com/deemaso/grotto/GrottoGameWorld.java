@@ -1,12 +1,17 @@
 package com.deemaso.grotto;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.EntityManager;
 import com.deemaso.core.events.SystemEvent;
 import com.deemaso.grotto.data.ResourceLoader;
+import com.deemaso.grotto.systems.LevelSystem;
 import com.deemaso.grotto.ui.UIManager;
 
 /**
@@ -77,6 +82,18 @@ public class GrottoGameWorld extends GameWorld{
         if(uiManager != null) {
             uiManager.removeEntityGameSpaceUIElements(e);
         }
+    }
+
+    public void restart(LevelSystem.PlayerData playerData){
+        Intent intent = new Intent(activity,
+                activity.getClass());
+        if(playerData != null){
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("playerData", playerData);
+            intent.putExtras(bundle);
+        }
+        startActivity(activity, intent, null);
+        activity.finish();
     }
 
     /**
