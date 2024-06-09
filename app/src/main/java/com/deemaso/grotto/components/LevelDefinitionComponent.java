@@ -1,6 +1,7 @@
 package com.deemaso.grotto.components;
 
 import com.deemaso.core.components.Component;
+import com.deemaso.grotto.levelgen.EnemyElementDefinition;
 import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class LevelDefinitionComponent extends Component {
     private int gridWidth;
     private int gridHeight;
     private final List<LevelGenerationElementDefinition> levelGenerationElementDefinitions;
+    private final List<EnemyElementDefinition> enemyElementDefinitions;
     private final float levelProgressionMultiplierIncrease;
     private float levelProgressionMultiplier;
 
@@ -28,6 +30,7 @@ public class LevelDefinitionComponent extends Component {
      * @param gridWidth The grid width
      * @param gridHeight The grid height
      * @param levelGenerationElementDefinitions The level generation element definitions
+     * @param enemyElementDefinitions The enemy element definitions
      * @param levelProgressionMultiplierIncrease The level progression multiplier increase
      * @param levelProgressionMultiplier The level progression multiplier
      */
@@ -38,6 +41,7 @@ public class LevelDefinitionComponent extends Component {
             int gridWidth,
             int gridHeight,
             List<LevelGenerationElementDefinition> levelGenerationElementDefinitions,
+            List<EnemyElementDefinition> enemyElementDefinitions,
             float levelProgressionMultiplierIncrease,
             float levelProgressionMultiplier
     ) {
@@ -47,6 +51,7 @@ public class LevelDefinitionComponent extends Component {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
         this.levelGenerationElementDefinitions = levelGenerationElementDefinitions;
+        this.enemyElementDefinitions = enemyElementDefinitions;
         this.levelProgressionMultiplierIncrease = levelProgressionMultiplierIncrease;
         this.levelProgressionMultiplier = levelProgressionMultiplier;
     }
@@ -105,5 +110,9 @@ public class LevelDefinitionComponent extends Component {
 
     public void setLevelProgressionMultiplier(float levelProgressionMultiplier) {
         this.levelProgressionMultiplier = levelProgressionMultiplier;
+    }
+
+    public List<EnemyElementDefinition> getEnemyElementDefinitions() {
+        return enemyElementDefinitions;
     }
 }
