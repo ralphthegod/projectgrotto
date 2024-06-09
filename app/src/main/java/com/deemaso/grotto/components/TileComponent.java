@@ -10,6 +10,7 @@ public class TileComponent extends Component {
     private int y;
     private float effectiveX;
     private float effectiveY;
+    private String tag;
 
     /**
      * Creates a new TileComponent.
@@ -17,15 +18,21 @@ public class TileComponent extends Component {
      * @param y The y coordinate
      * @param effectiveX The effective x coordinate
      * @param effectiveY The effective y coordinate
+     * @param tag The tag
      */
-    public TileComponent(int x, int y, float effectiveX, float effectiveY) {
+    public TileComponent(int x, int y, float effectiveX, float effectiveY, String tag) {
         this.x = x;
         this.y = y;
         this.effectiveX = effectiveX;
         this.effectiveY = effectiveY;
+        this.tag = tag;
     }
 
+    /**
+     * Creates a new TileComponent.
+     */
     public TileComponent() {
+        this.tag = "";
         this.x = 0;
         this.y = 0;
         this.effectiveX = 0;
@@ -70,5 +77,13 @@ public class TileComponent extends Component {
 
     public void setEffectiveY(float effectiveY) {
         this.effectiveY = effectiveY;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }
