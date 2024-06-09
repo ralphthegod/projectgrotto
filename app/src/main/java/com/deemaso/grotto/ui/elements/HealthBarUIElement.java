@@ -55,6 +55,36 @@ public class HealthBarUIElement extends UIElement implements EventListener {
             }
 
         }
+        else if(event.getCode().equals("PLAYER_LOADED"))
+        {
+            Entity entity = (Entity) event.get("entity");
+            if(entity.hasComponent(PlayerComponent.class)){
+                CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
+                int maxHealth = (int) characterStatsComponent.getStat("maxHealth");
+                int currentHealth = (int) characterStatsComponent.getStat("health");
+                int heartCount = children.size();
+                int requiredHeartCount = maxHealth / 2;
+
+                if(heartCount < requiredHeartCount){
+                    for (int i = heartCount; i < requiredHeartCount; i++) {
+                        HeartUIElement heartUIElement = new HeartUIElement(i * 20, 0, 25, 25, fullHeart, emptyHeart, halfHeart);
+                        addChild(heartUIElement);
+                    }
+                }
+                for (int i = 0; i < children.size(); i++) {
+                    HeartUIElement heartUIElement = (HeartUIElement) children.get(i);
+                    if(currentHealth >= 2){
+                        heartUIElement.setFullHeart();
+                        currentHealth -= 2;
+                    }else if(currentHealth == 1){
+                        heartUIElement.setHalfHeart();
+                        currentHealth -= 1;
+                    }else{
+                        heartUIElement.setEmptyHeart();
+                    }
+                }
+            }
+        }
     }
 
     @Override
