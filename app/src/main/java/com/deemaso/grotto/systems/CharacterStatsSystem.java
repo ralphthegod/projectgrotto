@@ -10,6 +10,7 @@ import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LootComponent;
 import com.deemaso.grotto.components.PlayerComponent;
+import com.deemaso.grotto.components.SoundComponent;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,6 +21,11 @@ import java.util.Queue;
  * This system handles the progression of characters in the game (Entities with CharacterStatsComponent).
  */
 public class CharacterStatsSystem extends System{
+
+    private enum StatOperation {
+        ADD,
+        SET
+    }
 
     /**
      * Creates a new level progression system.
@@ -40,29 +46,37 @@ public class CharacterStatsSystem extends System{
                 Entity entity1 = collision.getA();
                 Entity entity2 = collision.getB();
                 if(
-                        entity1.hasComponent(PlayerComponent.class) &&
-                                entity2.hasComponent(LootComponent.class)
+                        (entity1.hasComponent(PlayerComponent.class) &&
+                                (entity2.hasComponent(LootComponent.class) && !entity2.hasComponent(CharacterStatsComponent.class)))
                             ||
-                        entity2.hasComponent(PlayerComponent.class) &&
-                                entity1.hasComponent(LootComponent.class)
+                            (entity2.hasComponent(PlayerComponent.class) &&
+                                (entity1.hasComponent(LootComponent.class) && !entity1.hasComponent(CharacterStatsComponent.class)))
                 ){
                     Entity lootEntity = entity1.hasComponent(LootComponent.class) ?
                             entity1 : entity2;
                     Entity playerEntity = entity1.hasComponent(PlayerComponent.class) ?
                             entity1 : entity2;
-                    Progression prog = new Progression(playerEntity, lootEntity.getComponent(LootComponent.class).getValue(), lootEntity.getComponent(LootComponent.class).getStat());
+                    Progression prog = new Progression(
+                            playerEntity, lootEntity.getComponent(LootComponent.class).getValue(),
+                            lootEntity.getComponent(LootComponent.class).getStat()
+                    );
                     if(lootEntity.getComponent(LootComponent.class).isRemoveAfterCollecting()){
                         gameWorld.markEntityForDeletion(lootEntity);
+                    }
+                    if(lootEntity.hasComponent(SoundComponent.class)){
+                        SystemEvent soundEvent = new SystemEvent("SOUND");
+                        soundEvent.put("sound", lootEntity.getComponent(SoundComponent.class).getSounds().get("pickup"));
+                        gameWorld.broadcastEvent(soundEvent);
                     }
                     progressions.add(prog);
                 }
                 break;
 
-            case "COMBAT":
+            case "COMBAT_END":
                 Entity winner = (Entity) event.get("winner");
                 Entity loser = (Entity) event.get("loser");
-                if(winner != null && winner.hasComponent(CharacterStatsComponent.class)){
-                    Progression prog = new Progression(winner, (int) loser.getComponent(CharacterStatsComponent.class).getStat("experience"), "experience");
+                if(winner != null && winner.hasComponent(CharacterStatsComponent.class) && loser.hasComponent(LootComponent.class)){
+                    Progression prog = new Progression(winner, (loser.getComponent(LootComponent.class)).getValue(), (loser.getComponent(LootComponent.class)).getStat());
                     progressions.add(prog);
                 }
                 loser.getComponent(CharacterStatsComponent.class).setAlive(false);
@@ -122,6 +136,11 @@ public class CharacterStatsSystem extends System{
                     event.put("entity", entity);
                     gameWorld.broadcastEvent(event);
                 }
+                if(entity.hasComponent(SoundComponent.class)){
+                    SystemEvent soundEvent = new SystemEvent("SOUND");
+                    soundEvent.put("sound", entity.getComponent(SoundComponent.class).getSounds().get("death"));
+                    gameWorld.broadcastEvent(soundEvent);
+                }
                 gameWorld.markEntityForDeletion(entity);
             }
         }
@@ -129,6 +148,7 @@ public class CharacterStatsSystem extends System{
 
     private void processProgressions(){
         Progression progression = progressions.poll();
+
         // Consume a progression per update (frame)
         if (progression != null) {
             CharacterStatsComponent characterStatsComponent = progression.getEntity().getComponent(CharacterStatsComponent.class);
@@ -139,52 +159,65 @@ public class CharacterStatsSystem extends System{
             if (characterStatsComponent.hasStat(maxStat)) {
                 int maxStatValue = (int) characterStatsComponent.getStat(maxStat);
                 newValue = Math.min(newValue, maxStatValue);
+                Log.d("CharacterStatsSystem", "Limiting max on stat " + maxStat + "with " +newValue);
             }
 
-            characterStatsComponent.setStat(stat, newValue);
+            updateStat(progression.getEntity(), stat, newValue, StatOperation.SET);
             Log.d("LevelProgressionSystem", "Entity " + progression.getEntity().getId() + " got " + progression.getValue() + " " + progression.getStat() + ".");
-
-            SystemEvent event = new SystemEvent("STAT_UPDATED");
-            event.put("entity", progression.getEntity());
-            event.put("stat", progression.getStat());
-            event.put("value", newValue);
-            gameWorld.broadcastEvent(event);
         }
 
         // Check for level up
         for(Entity entity : entities){
             CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
             if((int) characterStatsComponent.getStat("experience") >= 10){
-                characterStatsComponent.setStat("level", (int)characterStatsComponent.getStat("level") + 1);
-                characterStatsComponent.setStat("experience", (int) characterStatsComponent.getStat("experience") - 10);
+                updateStat(entity, "level", 1, StatOperation.ADD);
+                updateStat(entity, "experience", -10, StatOperation.ADD);
+                int newLevel = (int) characterStatsComponent.getStat("level");
                 Log.d("LevelProgressionSystem", "Entity " + entity.getId() + " leveled up to " + characterStatsComponent.getStat("level") + ".");
 
-                // Emit level up event (e.g. for UI ...)
-                SystemEvent event = new SystemEvent("LEVEL_UP");
-                event.put("entity", entity);
-                event.put("level", characterStatsComponent.getStat("level"));
-                gameWorld.broadcastEvent(event);
+                if (characterStatsComponent.hasStat("maxHealth")) {
+                    int currentMaxHealth = (int) characterStatsComponent.getStat("maxHealth");
+                    int currentLevel = newLevel - 1;
+                    double baseMaxHealth = currentMaxHealth / Math.pow(1.05, currentLevel);
+                    int newMaxHealth = (int) (baseMaxHealth * Math.pow(1.05, newLevel));
+                    updateStat(entity, "maxHealth", newMaxHealth, StatOperation.SET);
+                    Log.d("LevelProgressionSystem", "Entity " + entity.getId() + " max health increased to " + newMaxHealth + ".");
+                }
 
-                SystemEvent event2 = new SystemEvent("STAT_UPDATED");
-                event2.put("entity", entity);
-                event2.put("stat", "experience");
-                event2.put("value", characterStatsComponent.getStat("experience"));
-                gameWorld.broadcastEvent(event2);
+                if(entity.hasComponent(PlayerComponent.class)) {
+                    SystemEvent event = new SystemEvent("SOUND");
+                    SoundComponent soundComponent = entity.getComponent(SoundComponent.class);
+                    event.put("sound", soundComponent.getSounds().get("level_up"));
+                    gameWorld.broadcastEvent(event);
+                }
             }
-
         }
+    }
+
+    private void updateStat(Entity entity, String stat, int value, StatOperation operation){
+        CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
+        int newValue = (int)characterStatsComponent.getStat(stat);
+        switch(operation){
+            case ADD:
+                newValue += value;
+                break;
+            case SET:
+                newValue = value;
+                break;
+        }
+        characterStatsComponent.setStat(stat, newValue);
+        SystemEvent event = new SystemEvent("STAT_UPDATED");
+        event.put("entity", entity);
+        event.put("stat", stat);
+        event.put("value", newValue);
+        gameWorld.broadcastEvent(event);
     }
 
     @Override
     public boolean registerEntity(Entity entity) {
         if(super.registerEntity(entity)){
             CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
-            characterStatsComponent.setStat("health", characterStatsComponent.getStat("maxHealth"));
-            SystemEvent event = new SystemEvent("STAT_UPDATED");
-            event.put("entity", entity);
-            event.put("stat", "health");
-            event.put("value", characterStatsComponent.getStat("maxHealth"));
-            gameWorld.broadcastEvent(event);
+            updateStat(entity, "health", (int) characterStatsComponent.getStat("maxHealth"), StatOperation.SET);
             return true;
         }
         return false;
