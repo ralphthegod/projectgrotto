@@ -7,4 +7,7 @@
         </sprites>
     </Component>
     <Component name="PhysicsComponent" density="10" friction="0.0" bodyType="2" shapeHeight="0.4" shapeWidth="0.4" isSensor="true" gravityScale="0"/>
+    <Component name="SoundComponent">
+        <Sound name="attack" path="sfx/07_human_atk_sword_1.wav"/>
+    </Component>
 </Entity>

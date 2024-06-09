@@ -1,0 +1,13 @@
+<Entity id="23">
+    <Component name="GrottoRenderComponent" animationFrameDuration="0.0" height="0.5" width="0.5"  zIndex="0" considerAngle="true">
+        <sprites>
+            <sprite>
+                sprites/weapon_arrow.png
+            </sprite>
+        </sprites>
+    </Component>
+    <Component name="PhysicsComponent" density="10" friction="0.0" bodyType="2" shapeHeight="0.2" shapeWidth="0.2" isSensor="true" gravityScale="0"/>
+    <Component name="SoundComponent">
+        <Sound name="attack" path="sfx/15_human_dash_2.wav"/>
+    </Component>
+</Entity>

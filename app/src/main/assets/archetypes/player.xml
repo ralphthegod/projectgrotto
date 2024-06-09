@@ -22,5 +22,11 @@
     <Component name="CharacterStatsComponent" faction="player" maxHealth="10"/>
     <Component name="PlayerComponent"/>
     <Component name="WeaponComponent" weapon="sword"/>
+    <Component name="SoundComponent">
+        <Sound name="damage" path="sfx/11_human_damage_2.wav"/>
+        <Sound name="level_up" path="sfx/08_human_charge_2.wav"/>
+        <Sound name="death" path="sfx/14_human_death_spin.wav"/>
+        <Sound name="attack" path="sfx/07_human_atk_sword_1.wav"/>
+    </Component>
     <UI name="LevelLabel" x="-1" y="-0.5" textSize="24" typeface="fonts/mini4.ttf" color="white"/>
 </Entity>

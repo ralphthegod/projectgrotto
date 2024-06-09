@@ -1,0 +1,3 @@
+<Entity id="14">
+    <Component name="MusicComponent" music="music/Goblins_Den_(Regular).wav"/>
+</Entity>

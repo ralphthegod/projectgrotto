@@ -3,33 +3,34 @@
     <Component name="GrottoRenderComponent" animationFrameDuration="0.25" height="1" width="1" zIndex="1">
         <sprites>
             <sprite>
-                sprites/goblin_idle_anim_f0.png
+                sprites/wogol_idle_anim_f0.png
             </sprite>
             <sprite>
-                sprites/goblin_idle_anim_f1.png
+                sprites/wogol_idle_anim_f1.png
             </sprite>
             <sprite>
-                sprites/goblin_idle_anim_f2.png
+                sprites/wogol_idle_anim_f2.png
             </sprite>
             <sprite>
-                sprites/goblin_idle_anim_f3.png
+                sprites/wogol_idle_anim_f3.png
             </sprite>
         </sprites>
     </Component>
     <Component name="PhysicsComponent" x="5" y="-5" density="0.5" friction="0.9" bodyType="2" shapeHeight="0.4" shapeWidth="0.4" gravityScale="0"/>
-    <Component name="CharacterStatsComponent" experience="0" faction="enemy" maxHealth="1"/>
-    <Component name="MovementComponent" speed="2" power="0.7"/>
-    <Component name="PerceptionComponent" perceptionRadius="5"/>
-    <Component name="AIComponent" decisionTree="base_enemy_dt"/>
+    <Component name="CharacterStatsComponent" experience="0" faction="enemy" maxHealth="2"/>
+    <Component name="MovementComponent" speed="3" power="0.7"/>
+    <Component name="PerceptionComponent" perceptionRadius="6"/>
+    <Component name="AIComponent" decisionTree="ranged_enemy_dt"/>
+    <Component name="LootComponent" lootValue="5" stat="experience"/>
     <Component name="SoundComponent">
         <Sound name="damage" path="sfx/21_orc_damage_1.wav"/>
         <Sound name="death" path="sfx/21_orc_damage_1.wav"/>
+        <Sound name="attack" path="sfx/15_human_dash_2.wav"/>
     </Component>
-    <Component name="WeaponComponent" weapon="goblin_melee_attack">
+    <Component name="WeaponComponent" weapon="arrow">
         <ignoreFactions>
             <faction>enemy</faction>
         </ignoreFactions>
     </Component>
-    <Component name="LootComponent" lootValue="3" stat="experience"/>
     <UI name="LevelLabel" x="-1" y="-0.5" textSize="24" typeface="fonts/mini4.ttf" color="red"/>
 </Entity>

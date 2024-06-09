@@ -8,4 +8,7 @@
     </Component>
     <Component name="PhysicsComponent" density="0.5" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4"/>
     <Component name="LootComponent" lootValue="10" stat="experience"/>
+    <Component name="SoundComponent">
+        <Sound name="pickup" path="sfx/01_chest_open_3.wav"/>
+    </Component>
 </Entity>

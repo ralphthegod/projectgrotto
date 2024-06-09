@@ -1,0 +1,13 @@
+<Entity id="23">
+    <Component name="GrottoRenderComponent" animationFrameDuration="0.0" height="1.5" width="1.5"  zIndex="0" considerAngle="true">
+        <sprites>
+            <sprite>
+                sprites/weapon_hammer.png
+            </sprite>
+        </sprites>
+    </Component>
+    <Component name="PhysicsComponent" density="10" friction="0.0" bodyType="2" shapeHeight="0.7" shapeWidth="0.7" isSensor="true" gravityScale="0"/>
+    <Component name="SoundComponent">
+        <Sound name="attack" path="sfx/20_orc_special_atk.wav"/>
+    </Component>
+</Entity>

@@ -7,5 +7,6 @@
         </sprites>
     </Component>
     <Component name="NavigationComponent" isWalkable="true" isFlyable="true"/>
-    <Component name="TileComponent"/>
+    <Component name="TileComponent" tag="ending"/>
+    <Component name="PhysicsComponent" density="0.0" friction="0.9" bodyType="0" shapeHeight="0.1" shapeWidth="0.1" isSensor="true"/>
 </Entity>

@@ -1,0 +1,4 @@
+<Entity id="14">
+    <Component name="PhysicsComponent" density="0.5" friction="0.9" bodyType="0" shapeHeight="0.4" shapeWidth="0.4" isSensor="true"/>
+    <Component name="EnemySpawnerComponent"/>
+</Entity>
