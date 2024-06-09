@@ -10,6 +10,7 @@ import com.deemaso.core.components.InputComponent;
 import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.input.InputEvent;
 import com.deemaso.core.systems.InputSystem;
+import com.deemaso.grotto.GrottoGameWorld;
 import com.deemaso.grotto.input.GrottoInputEvent;
 import com.deemaso.grotto.input.InputEventType;
 
@@ -56,8 +57,13 @@ public class GrottoInputSystem extends InputSystem {
             case TOUCH_DOWN:
                 Log.d("GrottoInputSystem", "Touch Down");
                 SystemEvent event = new SystemEvent("ATTACK");
-                event.put("attacker", e);
-                gameWorld.broadcastEvent(event);
+                if(e != null){
+                    event.put("attacker", e);
+                    gameWorld.broadcastEvent(event);
+                }
+                else{
+                    ((GrottoGameWorld) gameWorld).restart(null);
+                }
                 break;
             case TOUCH_UP:
                 Log.d("GrottoInputSystem", "Touch Up");
