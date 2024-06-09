@@ -24,22 +24,22 @@ import java.util.Set;
  */
 public class PerceptionSystem extends System {
 
-    private final World physicsWorld;
+    private World physicsWorld;
 
     /**
      * Creates a new perception system.
      * @param gameWorld The game world
-     * @param physicsWorld The physics world
      */
-    public PerceptionSystem(GameWorld gameWorld, World physicsWorld) {
+    public PerceptionSystem(GameWorld gameWorld) {
         super(gameWorld, Arrays.asList(PerceptionComponent.class, PhysicsComponent.class), true);
-        this.physicsWorld = physicsWorld;
     }
 
     @Override
     public void update(float dt) {
         super.update(dt);
-
+        if(physicsWorld == null){
+            return;
+        }
         for (Entity entity : entities) {
             PerceptionComponent perception = entity.getComponent(PerceptionComponent.class);
             PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
@@ -64,13 +64,13 @@ public class PerceptionSystem extends System {
                         return true;
                     }
                 }, aabb);
-
                 for (Fixture fixture : foundFixtures) {
                     Body body = fixture.getBody();
                     if (body != physics.getBody()) {
                         Entity otherEntity = (Entity) body.getUserData();
                         if (otherEntity != null) {
-                            perception.addPerceivedEntity(otherEntity);
+                            float distance = center.sub(body.getPosition()).length();
+                            perception.addPerceivedEntity(otherEntity, distance);
                         }
                     }
                 }
@@ -105,6 +105,8 @@ public class PerceptionSystem extends System {
 
     @Override
     public void onEvent(SystemEvent event) {
-
+        if(event.getCode().equals("PHYSICS_WORLD")){
+            physicsWorld = (World) event.get("physicsWorld");
+        }
     }
 }
