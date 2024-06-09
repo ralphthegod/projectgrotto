@@ -12,6 +12,7 @@ import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.CharacterStatsComponent;
 import com.deemaso.grotto.components.LimitedLifeComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
+import com.deemaso.grotto.components.SoundComponent;
 import com.deemaso.grotto.components.WeaponComponent;
 import com.deemaso.grotto.items.MeleeWeapon;
 import com.deemaso.grotto.items.RangedWeapon;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,44 @@ import java.util.Queue;
 public class CombatSystem extends System implements EventListener {
 
     private final Collection<MeleeAttack> meleeAttacks = new HashSet<>();
+    private final Collection<Bullet> bullets = new HashSet<>();
     private final Queue<Hit> hits = new LinkedList<>();
+
+    /**
+     * A bullet. Used to store bullets.
+     */
+    private static class Bullet {
+        private final Entity entity;
+        private final long startTime;
+        private final long maxTime;
+        private boolean isBeingDeleted = false;
+
+        public Bullet(Entity entity, long maxTime) {
+            this.entity = entity;
+            this.startTime = java.lang.System.currentTimeMillis();
+            this.maxTime = maxTime;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public long getStartTime() {
+            return startTime;
+        }
+
+        public long getMaxTime() {
+            return maxTime;
+        }
+
+        public boolean isBeingDeleted() {
+            return isBeingDeleted;
+        }
+
+        public void setBeingDeleted(boolean beingDeleted) {
+            isBeingDeleted = beingDeleted;
+        }
+    }
 
     /**
      * A melee attack. Used to animate melee attacks.
@@ -113,6 +152,21 @@ public class CombatSystem extends System implements EventListener {
         super.update(dt);
         solveMeleeAttacks(dt);
         solveHits();
+        solveBullets(dt);
+    }
+
+    private void solveBullets(float dt){
+        for(Bullet bullet : bullets){
+            if(bullet.getEntity() == null){
+                bullets.remove(bullet);
+                continue;
+            }
+            long currentTime = java.lang.System.currentTimeMillis();
+            if(currentTime - bullet.getStartTime() > bullet.getMaxTime() && !bullet.isBeingDeleted()){
+                bullet.setBeingDeleted(true);
+                gameWorld.markEntityForDeletion(bullet.getEntity());
+            }
+        }
     }
 
     private void solveMeleeAttacks(float dt){
@@ -140,11 +194,17 @@ public class CombatSystem extends System implements EventListener {
                 WeaponComponent weaponComponent = weapon.getComponent(WeaponComponent.class);
                 CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
 
+                int attackerLevel = 1;
+                if (weaponComponent.getOwner() != null && weaponComponent.getOwner().hasComponent(CharacterStatsComponent.class)) {
+                    attackerLevel = (int) weaponComponent.getOwner().getComponent(CharacterStatsComponent.class).getStat("level");
+                }
+                double levelModifier = calculateLevelModifier(attackerLevel);
+
                 if(weaponComponent.getWeapon() instanceof MeleeWeapon){ // Handle melee weapons
                     MeleeWeapon meleeWeapon = (MeleeWeapon) weaponComponent.getWeapon();
-                    damageTaken = meleeWeapon.getDamage();
+                    damageTaken = (int) (meleeWeapon.getDamage() * levelModifier);
                     Body entityBody = entity.getComponent(PhysicsComponent.class).getBody();
-                    int knockbackPower = (int) (meleeWeapon.getKnockback());
+                    int knockbackPower = (int) (meleeWeapon.getKnockback() * levelModifier);
                     Vec2 impulse = new Vec2(entityBody.getPosition().x - weapon.getComponent(PhysicsComponent.class).getBody().getPosition().x,
                             entityBody.getPosition().y - weapon.getComponent(PhysicsComponent.class).getBody().getPosition().y);
                     impulse.normalize();
@@ -152,7 +212,10 @@ public class CombatSystem extends System implements EventListener {
                     entityBody.applyLinearImpulse(impulse, entityBody.getPosition());
                 }
                 else{ // Handle ranged and collision weapons
-                    damageTaken = weaponComponent.getWeapon().getDamage();
+                    damageTaken = (int) (weaponComponent.getWeapon().getDamage() * levelModifier);
+                    if(weaponComponent.getWeapon() instanceof RangedWeapon){
+                        gameWorld.markEntityForDeletion(weapon);
+                    }
                 }
 
                 characterStatsComponent.setStat("health", (int) characterStatsComponent.getStat("health") - damageTaken);
@@ -163,6 +226,15 @@ public class CombatSystem extends System implements EventListener {
                 gameWorld.broadcastEvent(event);
                 if((int) characterStatsComponent.getStat("health") <= 0){
                     characterStatsComponent.setAlive(false);
+                    SystemEvent combatEvent = new SystemEvent("COMBAT_END");
+                    combatEvent.put("winner", weaponComponent.getOwner());
+                    combatEvent.put("loser", entity);
+                    gameWorld.broadcastEvent(combatEvent);
+                }
+                if(entity.hasComponent(SoundComponent.class)){
+                    SystemEvent soundEvent = new SystemEvent("SOUND");
+                    soundEvent.put("sound", entity.getComponent(SoundComponent.class).getSounds().get("damage"));
+                    gameWorld.broadcastEvent(soundEvent);
                 }
                 Log.d("CombatSystem", "Entity " + entity.getId() + " took " + damageTaken + " damage. Health: " + characterStatsComponent.getStat("health"));
             }
@@ -173,7 +245,6 @@ public class CombatSystem extends System implements EventListener {
         if (weapon.hasComponent(WeaponComponent.class) && target.hasComponent(CharacterStatsComponent.class)) {
             WeaponComponent weaponComponent = weapon.getComponent(WeaponComponent.class);
             boolean isCollisionWeapon = !(weaponComponent.getWeapon() instanceof MeleeWeapon) && !(weaponComponent.getWeapon() instanceof RangedWeapon);
-
             boolean isNotSameFaction = !weaponComponent.getIgnoreFactions().contains(target.getComponent(CharacterStatsComponent.class).getStat("faction"));
             if (weaponComponent.getOwner() != target && isNotSameFaction) {
                 if (weapon.hasComponent(CharacterStatsComponent.class) && isCollisionWeapon) {
@@ -182,6 +253,21 @@ public class CombatSystem extends System implements EventListener {
                     hits.add(new Hit(weapon, target));
                 } else if (!weapon.hasComponent(CharacterStatsComponent.class) && isCollisionWeapon) {
                     hits.add(new Hit(weapon, target));
+                }
+            }
+        }
+        else if((weapon.hasComponent(WeaponComponent.class) && !weapon.hasComponent(CharacterStatsComponent.class)) &&
+                (target.hasComponent(WeaponComponent.class) && !target.hasComponent(CharacterStatsComponent.class))){
+            WeaponComponent weaponComponent = weapon.getComponent(WeaponComponent.class);
+            WeaponComponent targetWeaponComponent = target.getComponent(WeaponComponent.class);
+            boolean bothAreRangedOrMelee = (weaponComponent.getWeapon() instanceof MeleeWeapon && targetWeaponComponent.getWeapon() instanceof RangedWeapon) ||
+                    (weaponComponent.getWeapon() instanceof RangedWeapon && targetWeaponComponent.getWeapon() instanceof MeleeWeapon);
+            if(bothAreRangedOrMelee){
+                if(weaponComponent.getWeapon() instanceof RangedWeapon && targetWeaponComponent.getWeapon() instanceof MeleeWeapon){
+                    gameWorld.markEntityForDeletion(weapon);
+                }
+                else if(weaponComponent.getWeapon() instanceof MeleeWeapon && targetWeaponComponent.getWeapon() instanceof RangedWeapon){
+                    gameWorld.markEntityForDeletion(target);
                 }
             }
         }
@@ -202,10 +288,16 @@ public class CombatSystem extends System implements EventListener {
             Entity attacker = (Entity) event.get("attacker");
             if(attacker != null && attacker.hasComponent(WeaponComponent.class)){
                 WeaponComponent weaponComponent = attacker.getComponent(WeaponComponent.class);
+                int attackerLevel = 1;
+                if (attacker.hasComponent(CharacterStatsComponent.class)) {
+                    attackerLevel = (int) attacker.getComponent(CharacterStatsComponent.class).getStat("level");
+                }
+                float levelModifier = calculateLevelModifier(attackerLevel);
+
                 if(weaponComponent.getWeapon() instanceof MeleeWeapon){
                     MeleeWeapon meleeWeapon = (MeleeWeapon) weaponComponent.getWeapon();
                     long currentTime = java.lang.System.currentTimeMillis();
-                    if(currentTime - weaponComponent.getLastFired() < meleeWeapon.getSlashSpeed() * 1000){
+                    if(currentTime - weaponComponent.getLastFired() < (meleeWeapon.getSlashSpeed() / levelModifier) * 1000){
                         return; // Handle cooldown (prevent spamming)
                     }
                     weaponComponent.setLastFired(currentTime);
@@ -218,14 +310,52 @@ public class CombatSystem extends System implements EventListener {
                     Body weaponBody = w.getComponent(PhysicsComponent.class).getBody();
                     Body attackerBody = attacker.getComponent(PhysicsComponent.class).getBody();
 
+                    if(attacker.hasComponent(SoundComponent.class)){
+                        SystemEvent soundEvent = new SystemEvent("SOUND");
+                        soundEvent.put("sound", attacker.getComponent(SoundComponent.class).getSounds().get("attack"));
+                        gameWorld.broadcastEvent(soundEvent);
+                    }
+
                     weaponBody.setTransform(attackerBody.getPosition(), 0);
-                    meleeAttacks.add(new MeleeAttack(attacker, w, (float)(2 * Math.PI) / meleeWeapon.getSlashSpeed()));
+                    meleeAttacks.add(new MeleeAttack(attacker, w, (float)(2 * Math.PI) / (meleeWeapon.getSlashSpeed() / levelModifier)));
                 }
                 else if(weaponComponent.getWeapon() instanceof RangedWeapon){
-                    Log.d("COMBAT", "Ranged weapon attack");
+                    RangedWeapon rangedWeapon = (RangedWeapon) weaponComponent.getWeapon();
+                    long currentTime = java.lang.System.currentTimeMillis();
+                    if (currentTime - weaponComponent.getLastFired() < (rangedWeapon.getReloadTime() / levelModifier) * 1000) {
+                        return;
+                    }
+                    weaponComponent.setLastFired(currentTime);
+
+                    Collection<Component> extraComponents = new ArrayList<>();
+                    WeaponComponent projectileWeaponComponent = new WeaponComponent(rangedWeapon, Arrays.asList());
+                    projectileWeaponComponent.setOwner(attacker);
+                    extraComponents.add(projectileWeaponComponent);
+                    Entity projectile = gameWorld.createEntityById(rangedWeapon.getArchetype(), extraComponents);
+                    Body projectileBody = projectile.getComponent(PhysicsComponent.class).getBody();
+                    Body attackerBody = attacker.getComponent(PhysicsComponent.class).getBody();
+
+                    if(attacker.hasComponent(SoundComponent.class)){
+                        SystemEvent soundEvent = new SystemEvent("SOUND");
+                        soundEvent.put("sound", attacker.getComponent(SoundComponent.class).getSounds().get("attack"));
+                        gameWorld.broadcastEvent(soundEvent);
+                    }
+
+                    Vec2 direction = (Vec2) event.get("direction");
+                    Vec2 velocity = new Vec2(direction);
+                    velocity.normalize();
+                    velocity.mulLocal(rangedWeapon.getBulletSpeed() * levelModifier);
+                    float angle = (float) Math.atan2(direction.y, direction.x);
+                    projectileBody.setTransform(attackerBody.getPosition(), angle + (float) Math.PI / 2);
+                    projectileBody.setLinearVelocity(velocity);
+                    bullets.add(new Bullet(projectile, 5000));
                 }
             }
         }
+    }
+
+    private float calculateLevelModifier(int level) {
+        return (float) (1.0 + (level - 1) * 0.01);
     }
 
     @Override
@@ -238,6 +368,21 @@ public class CombatSystem extends System implements EventListener {
             }
         }
         return true;
+    }
+
+    @Override
+    public void unregisterEntity(Entity entity) {
+        super.unregisterEntity(entity);
+        if(entity.hasComponent(WeaponComponent.class)){
+            Iterator<MeleeAttack> iterator = meleeAttacks.iterator();
+            while (iterator.hasNext()) {
+                MeleeAttack attack = iterator.next();
+                if (attack.getAttacker() == entity) {
+                    iterator.remove();
+                    gameWorld.markEntityForDeletion(attack.getWeapon());
+                }
+            }
+        }
     }
 
     @Override
