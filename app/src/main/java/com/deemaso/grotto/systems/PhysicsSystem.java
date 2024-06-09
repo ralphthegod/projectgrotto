@@ -1,5 +1,7 @@
 package com.deemaso.grotto.systems;
 
+import android.util.Log;
+
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.RenderComponent;
@@ -8,6 +10,7 @@ import com.deemaso.core.systems.System;
 import com.deemaso.grotto.components.GrottoRenderComponent;
 import com.deemaso.grotto.components.PhysicsComponent;
 
+import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 public class PhysicsSystem extends System{
 
     World physicsWorld;
+    ContactListener contactListener;
 
     private float gravityX = 0;
     private float gravityY = 0;
@@ -38,14 +42,14 @@ public class PhysicsSystem extends System{
     /**
      * Creates a new physics system.
      * @param gameWorld The game world
-     * @param physicsWorld The physics world
+     * @param contactListener The contact listener
      * @param velocityIterations The velocity iterations
      * @param positionIterations The position iterations
      * @param particleIterations The particle iterations
      */
     public PhysicsSystem(
             GameWorld gameWorld,
-            World physicsWorld,
+            ContactListener contactListener,
             int velocityIterations,
             int positionIterations,
             int particleIterations
@@ -54,12 +58,14 @@ public class PhysicsSystem extends System{
         this.velocityIterations = velocityIterations;
         this.positionIterations = positionIterations;
         this.particleIterations = particleIterations;
-        this.physicsWorld = physicsWorld;
+        this.contactListener = contactListener;
+        physicsWorld = new World(new Vec2(0, 0));
+        physicsWorld.setContactListener(contactListener);
+
     }
 
     @Override
     public void update(float dt) {
-
         super.update(dt);
 
         if(isGravityChanged) {
@@ -67,7 +73,10 @@ public class PhysicsSystem extends System{
             isGravityChanged = false;
         }
 
-        physicsWorld.step(dt, velocityIterations, positionIterations);
+        checkEntitiesValidity();
+
+        //Log.d("PhysicsSystem", "Physics update, body count: " + physicsWorld.getBodyCount() + ", joint count: " + physicsWorld.getJointCount());
+        if(physicsWorld.getBodyCount() > 0) physicsWorld.step(dt, velocityIterations, positionIterations);
 
         // Emit a PhysicsWorldEvent for other systems to listen to
         SystemEvent event = new SystemEvent("PHYSICS_WORLD");
@@ -75,11 +84,20 @@ public class PhysicsSystem extends System{
         gameWorld.broadcastEvent(event);
     }
 
+    private void checkEntitiesValidity(){
+        for(Entity entity : entities){
+            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+            if(physics == null && physics.getBody().getWorld() != physicsWorld){
+                Log.e("PhysicsSystem", "Entity with id " + entity.getId() + " has a body that is not in the physics world.");
+                gameWorld.markEntityForDeletion(entity);
+            }
+        }
+    }
+
     @Override
     public boolean registerEntity(Entity entity) {
         boolean hasBeenAdded = super.registerEntity(entity);
         if(hasBeenAdded) {
-            // Create a body for the entity
             PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
             BodyDef bodyDef = new BodyDef();
             bodyDef.position.set(physics.getX(), physics.getY());
@@ -109,10 +127,19 @@ public class PhysicsSystem extends System{
     }
 
     @Override
-    public void unregisterEntity(Entity entity) {
-        super.unregisterEntity(entity);
-        PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-        physicsWorld.destroyBody(physics.getBody());
+    public void deleteMarkedEntities(){
+        for(Entity entity : entitiesToDelete){
+            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+            Log.d("PhysicsSystem", "Destroying body of entity with id " + entity.getId());
+            if(physics != null && physicsWorld.getBodyCount() > 0){
+                physicsWorld.destroyBody(physics.getBody());
+                Log.d("PhysicsSystem", "Body destroyed, current bodycount: " + physicsWorld.getBodyCount());
+            }
+            else{
+                Log.e("PhysicsSystem", "Error in destroying body.");
+            }
+        }
+        super.deleteMarkedEntities();
     }
 
     /**
@@ -143,6 +170,13 @@ public class PhysicsSystem extends System{
 
     @Override
     public void onEvent(SystemEvent event) {
-
+        /*if(event.getCode().equals("LEVEL_GENERATION")){
+            Log.d("PhysicsSystem", "Level generation event received, creating new physics world.");
+            physicsWorld = new World(new Vec2(0, 0));
+            physicsWorld.setContactListener(contactListener);
+            SystemEvent physicsWorldEvent = new SystemEvent("PHYSICS_WORLD");
+            physicsWorldEvent.put("physicsWorld", physicsWorld);
+            gameWorld.broadcastEvent(physicsWorldEvent);
+        }*/
     }
 }
