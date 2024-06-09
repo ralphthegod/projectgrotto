@@ -1,5 +1,7 @@
 package com.deemaso.core;
 
+import android.util.Log;
+
 import com.deemaso.core.components.Component;
 import com.deemaso.core.events.SystemEvent;
 import com.deemaso.core.systems.System;
@@ -113,16 +115,18 @@ public class GameWorld {
             s.unregisterEntity(e);
         }
         entityManager.markEntityForDeletion(e);
+        Log.d("GameWorld", e.getId() + " marked for deletion.");
     }
 
     /**
      * Deletes all entities that are marked for deletion.
      */
     public void deleteMarkedEntities() {
-        List<Entity> entities = entityManager.getEntitiesMarkedForDeletion();
+        //List<Entity> entities = entityManager.getEntitiesMarkedForDeletion();
         for(System s : systems) {
-            s.unregisterEntities(entities);
+            s.deleteMarkedEntities();
         }
+        if(!entityManager.getEntitiesMarkedForDeletion().isEmpty()) Log.d("GameWorld", "Deleting marked entities...");
         entityManager.removeMarkedEntities();
     }
 
