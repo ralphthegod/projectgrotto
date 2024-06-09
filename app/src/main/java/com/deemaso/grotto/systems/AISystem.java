@@ -40,6 +40,7 @@ public class AISystem extends System {
             AIComponent aiComponent = entity.getComponent(AIComponent.class);
             if (aiComponent != null) {
                 AIContext context = aiComponent.getContext();
+                context.put("gameWorld", gameWorld);
                 context.put("self", entity);
                 aiComponent.getDecisionTree().execute(context);
             }
