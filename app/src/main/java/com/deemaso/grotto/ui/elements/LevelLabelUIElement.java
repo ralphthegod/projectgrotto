@@ -6,6 +6,7 @@ import android.util.Log;
 import com.deemaso.core.Entity;
 import com.deemaso.core.events.EventListener;
 import com.deemaso.core.events.SystemEvent;
+import com.deemaso.grotto.components.CharacterStatsComponent;
 
 public class LevelLabelUIElement extends GameSpaceTextUIElement implements EventListener {
 
@@ -15,16 +16,18 @@ public class LevelLabelUIElement extends GameSpaceTextUIElement implements Event
 
     @Override
     public void draw(float screenX, float screenY) {
-        getCanvas().drawText(getText(), screenX, screenY, getPaint());
+        String text = "Lvl 1";
+        final CharacterStatsComponent characterStatsComponent = entity.getComponent(CharacterStatsComponent.class);
+        if(characterStatsComponent != null) text = "Lvl " + characterStatsComponent.getStat("level");
+        getCanvas().drawText(text, screenX, screenY, getPaint());
     }
 
     @Override
     public void onEvent(SystemEvent event) {
-        if((event.getCode().equals("LEVEL_UP") || event.getCode().equals("LEVEL_DOWN") || event.getCode().equals("LEVEL_SET"))
-                && event.get("entity").equals(getEntity()))
-        {
-            setText("Lvl " + event.get("level"));
+        final String code = event.getCode();
+        if ((code.equals("PLAYER_LOADED") || (code.equals("STAT_UPDATED") && "level".equals(event.get("stat")) && event.get("entity").equals(getEntity())))) {
+            CharacterStatsComponent characterStatsComponent = getEntity().getComponent(CharacterStatsComponent.class);
+            setText("Lvl " + characterStatsComponent.getStat("level"));
         }
-
     }
 }
