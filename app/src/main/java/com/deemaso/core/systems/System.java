@@ -1,12 +1,9 @@
 package com.deemaso.core.systems;
 
-import android.util.Log;
-
 import com.deemaso.core.Entity;
 import com.deemaso.core.GameWorld;
 import com.deemaso.core.components.Component;
 import com.deemaso.core.events.EventListener;
-import com.deemaso.core.events.SystemEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +41,23 @@ public abstract class System implements EventListener {
      * @return True if the entity was registered, false otherwise
      */
     public boolean registerEntity(Entity entity) {
+        if(hasRequiredComponents(entity)){
+            entities.add(entity);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * It checks if the entity has the required components.
+     * @param entity The entity to check
+     */
+    public boolean hasRequiredComponents(Entity entity){
         if (requireAllComponents) {
-            if(entity.hasComponents(requiredComponents)) {
-                entities.add(entity);
-                return true;
-            }
+            return entity.hasComponents(requiredComponents);
         } else {
             for (Class<? extends Component> componentClass : requiredComponents) {
                 if (entity.hasComponent(componentClass)) {
-                    entities.add(entity);
                     return true;
                 }
             }
@@ -65,7 +70,8 @@ public abstract class System implements EventListener {
      * @param entity The entity to unregister
      */
     public void unregisterEntity(Entity entity) {
-        entitiesToDelete.add(entity);
+        if(hasRequiredComponents(entity))
+            entitiesToDelete.add(entity);
     }
 
     /**
@@ -81,7 +87,7 @@ public abstract class System implements EventListener {
     /**
      * Deletes entities marked for deletion.
      * */
-    public void deleteEntities() {
+    public void deleteMarkedEntities() {
         for (Entity entity : entitiesToDelete) {
             entities.remove(entity);
         }
@@ -93,7 +99,7 @@ public abstract class System implements EventListener {
      * @param dt The time since the last update
      * */
     public void update(float dt){
-        deleteEntities();
+        //deleteEntities();
     }
 
     protected abstract void finalize();
