@@ -200,8 +200,8 @@
         <ElementDefinition
             symbol="G"
             name="coin"
-            globalMinQuantity="50"
-            globalMaxQuantity="100"
+            globalMinQuantity="10"
+            globalMaxQuantity="30"
             canBeInRoom="true"
             canBeInCorridor="true"
             minDistanceBetweenElements="0"
@@ -221,11 +221,11 @@
         <ElementDefinition
             symbol="H"
             name="health"
-            globalMinQuantity="10"
-            globalMaxQuantity="20"
+            globalMinQuantity="1"
+            globalMaxQuantity="7"
             canBeInRoom="true"
             canBeInCorridor="true"
-            minDistanceBetweenElements="0"
+            minDistanceBetweenElements="10"
             distribution="1">
             <TileArchetypes>
                 <TileArchetype
@@ -262,17 +262,17 @@
         </ElementDefinition>
         <ElementDefinition
             symbol="1"
-            name="minion"
-            globalMinQuantity="5"
-            globalMaxQuantity="10"
+            name="enemy"
+            globalMinQuantity="10"
+            globalMaxQuantity="20"
             canBeInRoom="true"
-            canBeInCorridor="false"
+            canBeInCorridor="true"
             minDistanceBetweenElements="0"
             distribution="1">
             <TileArchetypes>
                 <TileArchetype
                     probability="1"
-                    archetypeId="goblin"
+                    archetypeId="enemy_spawner"
                     baseArchetypeId="floor_1"
                     topArchetypeId="-1"
                     rightArchetypeId="-1"
@@ -284,11 +284,11 @@
         <ElementDefinition
             symbol="^"
             name="spike"
-            globalMinQuantity="50"
-            globalMaxQuantity="70"
+            globalMinQuantity="10"
+            globalMaxQuantity="30"
             canBeInRoom="true"
             canBeInCorridor="true"
-            minDistanceBetweenElements="2"
+            minDistanceBetweenElements="4"
             distribution="1">
             <TileArchetypes>
                 <TileArchetype
@@ -302,6 +302,45 @@
                 />
             </TileArchetypes>
         </ElementDefinition>
-        <!-- OTHER ELEMENTS..-->
+        <ElementDefinition
+            symbol="T"
+            name="track"
+            globalMinQuantity="1"
+            globalMaxQuantity="1"
+            canBeInRoom="true"
+            canBeInCorridor="true"
+            minDistanceBetweenElements="4"
+            distribution="1">
+            <TileArchetypes>
+                <TileArchetype
+                    probability="1"
+                    archetypeId="background_music_dungeon"
+                    baseArchetypeId="-1"
+                    topArchetypeId="-1"
+                    rightArchetypeId="-1"
+                    bottomArchetypeId="-1"
+                    leftArchetypeId="-1"
+                />
+            </TileArchetypes>
+        </ElementDefinition>
+        <!-- Enemies -->
+        <EnemyDefinition
+            enemyArchetypeId="goblin"
+            maxQuantity="999"
+            minPlayerLevel="1"
+            probability="0.8"
+        />
+        <EnemyDefinition
+            enemyArchetypeId="wogol"
+            maxQuantity="999"
+            minPlayerLevel="1"
+            probability="0.2"
+        />
+        <EnemyDefinition
+            enemyArchetypeId="ogre"
+            maxQuantity="2"
+            minPlayerLevel="1"
+            probability="0.2"
+        />
     </Component>
 </Entity>
