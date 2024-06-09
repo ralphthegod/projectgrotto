@@ -3,6 +3,7 @@ package com.deemaso.grotto;
 import android.content.Context;
 import android.util.Log;
 
+import com.badlogic.androidgames.framework.Sound;
 import com.deemaso.core.Entity;
 import com.deemaso.core.EntityManager;
 import com.deemaso.core.components.Component;
@@ -12,15 +13,18 @@ import com.deemaso.grotto.ai.DecisionTreeFactory;
 import com.deemaso.grotto.ai.TreeNode;
 import com.deemaso.grotto.components.AIComponent;
 import com.deemaso.grotto.components.CharacterStatsComponent;
+import com.deemaso.grotto.components.EnemySpawnerComponent;
 import com.deemaso.grotto.components.LevelDefinitionComponent;
 import com.deemaso.grotto.components.LootComponent;
 import com.deemaso.grotto.components.MovementComponent;
 import com.deemaso.grotto.components.NavigationComponent;
 import com.deemaso.grotto.components.PerceptionComponent;
 import com.deemaso.grotto.components.PlayerComponent;
+import com.deemaso.grotto.components.SoundComponent;
 import com.deemaso.grotto.components.TileComponent;
 import com.deemaso.grotto.components.WeaponComponent;
 import com.deemaso.grotto.data.ResourceLoader;
+import com.deemaso.grotto.levelgen.EnemyElementDefinition;
 import com.deemaso.grotto.levelgen.LevelGenerationElementDefinition;
 import com.deemaso.grotto.utils.Helpers;
 import com.deemaso.grotto.components.CameraComponent;
@@ -35,7 +39,9 @@ import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -159,13 +165,29 @@ public class GrottoEntityManager extends EntityManager {
         );
 
         componentFactory.registerComponent(
+            "SoundComponent",
+            (element) -> {
+                Map<String, String> soundPaths = new HashMap<>();
+                NodeList sounds = element.getElementsByTagName("Sound");
+                for (int i = 0; i < sounds.getLength(); i++) {
+                    Element soundElement = (Element) sounds.item(i);
+                    String soundName = soundElement.getAttribute("name");
+                    String soundPath = soundElement.getAttribute("path");
+                    soundPaths.put(soundName, soundPath);
+                }
+                return new SoundComponent(soundPaths);
+            }
+        );
+
+        componentFactory.registerComponent(
             "TileComponent",
             (Element element) -> {
                 int x = Helpers.getAttributeAsInt(element, "x", 0);
                 int y = Helpers.getAttributeAsInt(element, "y", 0);
                 float effectiveX = Helpers.getAttributeAsFloat(element, "effectiveX", 0.0f);
                 float effectiveY = Helpers.getAttributeAsFloat(element, "effectiveY", 0.0f);
-                return new TileComponent(x, y, effectiveX, effectiveY);
+                String tag = Helpers.getAttributeAsString(element, "tag", "");
+                return new TileComponent(x, y, effectiveX, effectiveY, tag);
             }
         );
 
@@ -188,6 +210,7 @@ public class GrottoEntityManager extends EntityManager {
                 int gridHeight = Helpers.getAttributeAsInt(element, "gridHeight", 10);
                 float levelProgressionMultiplierIncrease = Helpers.getAttributeAsFloat(element, "levelProgressionMultiplierIncrease", 0.3f);
                 float levelProgressionMultiplier = Helpers.getAttributeAsFloat(element, "levelProgressionMultiplier", 1.1f);
+
                 List<LevelGenerationElementDefinition> listElementDefinitions = new ArrayList<>();
 
                 NodeList elementDefinitions = element.getElementsByTagName("ElementDefinition");
@@ -197,6 +220,15 @@ public class GrottoEntityManager extends EntityManager {
                     listElementDefinitions.add(elementDefinition);
                 }
 
+                List<EnemyElementDefinition> enemyElementDefinitions = new ArrayList<>();
+
+                NodeList enemyDefinitions = element.getElementsByTagName("EnemyDefinition");
+                for (int i = 0; i < enemyDefinitions.getLength(); i++) {
+                    Element enemyDefinitionElement = (Element) enemyDefinitions.item(i);
+                    EnemyElementDefinition enemyDefinition = EnemyElementDefinition.loadFromXml(enemyDefinitionElement);
+                    enemyElementDefinitions.add(enemyDefinition);
+                }
+
                 return new LevelDefinitionComponent(
                     minRoomSize,
                     maxRoomSize,
@@ -204,6 +236,7 @@ public class GrottoEntityManager extends EntityManager {
                     gridWidth,
                     gridHeight,
                     listElementDefinitions,
+                    enemyElementDefinitions,
                     levelProgressionMultiplierIncrease,
                     levelProgressionMultiplier
                 );
@@ -269,6 +302,13 @@ public class GrottoEntityManager extends EntityManager {
                 String weapon = Helpers.getAttributeAsString(element, "weapon", "");
                 List<String> ignoreFactionList = Helpers.getChildElementsAsStringList(element, "faction");
                 return new WeaponComponent(ResourceLoader.loadWeapon(context, weapon), ignoreFactionList);
+            }
+        );
+
+        componentFactory.registerComponent(
+            "EnemySpawnerComponent",
+            (element) -> {
+                return new EnemySpawnerComponent();
             }
         );
 
