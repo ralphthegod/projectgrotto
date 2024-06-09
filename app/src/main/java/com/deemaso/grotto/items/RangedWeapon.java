@@ -8,6 +8,7 @@ import java.util.List;
 public class RangedWeapon extends Weapon{
 
     private final float bulletSpeed;
+    private final float reloadTime;
 
     /**
      * Creates a new ranged weapon.
@@ -17,12 +18,17 @@ public class RangedWeapon extends Weapon{
      * @param bulletSpeed The bullet speed
      * @param knockback The knockback
      */
-    public RangedWeapon(String name, String archetype, int damage, float bulletSpeed, float knockback) {
+    public RangedWeapon(String name, String archetype, int damage, float bulletSpeed, float knockback, float reloadTime) {
         super(name, archetype, damage, knockback);
         this.bulletSpeed = bulletSpeed;
+        this.reloadTime = reloadTime;
     }
 
     public float getBulletSpeed() {
         return bulletSpeed;
+    }
+
+    public float getReloadTime() {
+        return reloadTime;
     }
 }
