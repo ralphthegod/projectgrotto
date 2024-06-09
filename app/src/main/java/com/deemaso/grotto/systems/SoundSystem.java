@@ -1,5 +1,7 @@
 package com.deemaso.grotto.systems;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Audio;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Sound;
@@ -47,6 +49,7 @@ public class SoundSystem extends System{
                     }
                     else{
                         backgroundMusic = audio.newMusic(musicComponent.getPath());
+                        Log.d("SoundSystem", "Playing music: " + musicComponent.getPath());
                     }
                     backgroundMusic.setLooping(true);
                     backgroundMusic.play();
@@ -55,7 +58,7 @@ public class SoundSystem extends System{
         }
         Sound nextSound = soundQueue.poll();
         if(nextSound != null){
-            if(java.lang.System.nanoTime() > timeOfLastSound + 500_000_000){
+            if(java.lang.System.nanoTime() > timeOfLastSound + 1_000_000){
                 nextSound.play(0.7f);
                 timeOfLastSound = java.lang.System.nanoTime();
             }
@@ -63,6 +66,34 @@ public class SoundSystem extends System{
                 soundQueue.add(nextSound);
             }
         }
+    }
+
+    @Override
+    public boolean registerEntity(Entity entity) {
+        if(!super.registerEntity(entity)) return false;
+        if(entity.hasComponent(MusicComponent.class)){
+            MusicComponent musicComponent = entity.getComponent(MusicComponent.class);
+            if(musicComponent.getMusic() == null){
+                musicComponent.setMusic(audio.newMusic(musicComponent.getPath()));
+            }
+        }
+        else if(entity.hasComponent(SoundComponent.class)){
+            SoundComponent soundComponent = entity.getComponent(SoundComponent.class);
+            for(String path : soundComponent.getPaths().keySet()){
+                try{
+                    Sound sound = audio.newSound(soundComponent.getPaths().get(path));
+                    soundComponent.addSound(path, sound);
+                }
+                catch (Exception e){
+                    Log.e("SoundSystem", "Failed to load sound: " + soundComponent.getPaths().get(path));
+                    return false;
+                }
+            }
+        }
+        else{
+            return false;
+        }
+        return true;
     }
 
     @Override
