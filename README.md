@@ -9,7 +9,7 @@ Project Grotto is an Android game development project that leverages the Entity 
 
 ## The Game
 
-Project Grotto is a dungeon crawler game based on maze exploration. 
+Project Grotto is a dungeon crawler game based on maze exploration with permadeath mechanics. 
 
 - **Progression**: collect treasures and defeat enemies.
 - **Accelerometer-based Movement**: requires good control skill to avoid obstacles.
