@@ -9,12 +9,12 @@ Project Grotto is an Android game development project that leverages the Entity 
 
 ## The Game
 
-Project Grotto is a roguelike dungeon-crawler where players must explore a deep and dangerous dungeon. The game features several key mechanics:
+Project Grotto is a dungeon crawler game based on maze exploration. 
 
-- **Progression**: Collecting valuable items and defeating enemies are the primary mechanics for progression.
-- **Accelerometer-based Movement**: The movement mechanic requires good control skills to avoid enemies and obstacles.
-- **Procedural Level Generation**: Each level is entirely randomly generated, including the treasures and monsters populating it.
-- **AI Decision Trees**: The behavior of enemies and other NPCs is governed by decision trees.
+- **Progression**: collect treasures and defeat enemies.
+- **Accelerometer-based Movement**: requires good control skill to avoid obstacles.
+- **Procedural Level Generation**: each level is randomly generated.
+- **AI Decision Trees**: to model the AI behavior.
 
 
 ## Additional Information
